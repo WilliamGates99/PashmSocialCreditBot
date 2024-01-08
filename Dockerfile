@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk-alpine:15.0.3
+FROM openjdk:18
 
 COPY build/libs/PashmSocialCreditBot-1.0.0.jar /app.jar
 
