@@ -1,44 +1,24 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.5.10"
+    kotlin("jvm") version "1.9.22"
     application
 }
 
-group = "pro.labster"
-version = "1.0.6"
+group = "com.xeniac"
+version = "1.0.0"
 
-repositories {
-    mavenCentral()
-    maven(url = "https://jitpack.io")
+kotlin {
+    jvmToolchain(18)
 }
 
 dependencies {
-    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4")
+    // Kotlin Telegram Bot Library
+    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
 
-    implementation("org.jetbrains.exposed:exposed-core:0.32.1")
-    implementation("org.jetbrains.exposed:exposed-dao:0.32.1")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.32.1")
+    // Exposed SQL library
+    implementation("org.jetbrains.exposed:exposed-core:0.45.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.45.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.45.0")
 
-    implementation("org.xerial:sqlite-jdbc:3.34.0")
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "13"
-}
-
-application {
-    mainClassName = "MainKt"
-}
-
-tasks.jar {
-    manifest {
-        attributes["Main-Class"] = "MainKt"
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    configurations["compileClasspath"].forEach { file: File ->
-        from(zipTree(file.absoluteFile))
-    }
+    // SQLite JDBC Library
+    implementation("org.xerial:sqlite-jdbc:3.44.1.0")
 }
