@@ -1,4 +1,4 @@
-FROM openjdk:18
+FROM openjdk:21
 
 COPY build/libs/PashmSocialCreditBot-1.0.0.jar /app.jar
 
