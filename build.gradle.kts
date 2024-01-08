@@ -9,12 +9,24 @@ group = "com.xeniac"
 version = "1.0.0"
 
 kotlin {
-    jvmToolchain(jdkVersion = 18)
+    jvmToolchain(jdkVersion = 21)
 }
 
 dependencies {
     // Kotlin Telegram Bot Library
     implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+
+    // Google Gson Library
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    // Square OkHttp Library
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+
+    // Square Retrofit Library
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     // Exposed SQL library
     implementation("org.jetbrains.exposed:exposed-core:0.45.0")
@@ -26,7 +38,7 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "18"
+    kotlinOptions.jvmTarget = "21"
 }
 
 application {
