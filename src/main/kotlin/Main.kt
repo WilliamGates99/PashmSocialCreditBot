@@ -5,24 +5,24 @@ import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.User
-import java.io.File
-import java.io.FileInputStream
-import java.util.Properties
+import data.RatingRepository
+import data.RatingRepositoryImpl
+import util.Constants
+import util.Jobs
+import util.PropertiesHelper
+import util.Stickers
 import kotlin.math.absoluteValue
 
-/**
- * @param args: arrayOf("<properties_file_path>", "<db_path>")
- */
-fun main(args: Array<String>) {
-    val ratingsRepository: RatingRepository = RatingRepositoryImpl(args[1])
+fun main() {
+    val ratingsRepository: RatingRepository = RatingRepositoryImpl(dbPath = PropertiesHelper.getDbPath())
 
     val bot = bot {
-        token = getBotToken(args[0])
+        token = PropertiesHelper.getBotToken()
 
         dispatch {
-            command(COMMAND_MY_RATING) {
+            command(Constants.COMMAND_MY_RATING) {
                 message.from?.let { user ->
-                    val info = ratingsRepository.getRating(user.id)
+                    val info = ratingsRepository.getUserRating(user.id)
                     val userSocialCredit = info?.rating ?: 0L
 
                     bot.sendMessage(
@@ -33,9 +33,9 @@ fun main(args: Array<String>) {
                 }
             }
 
-            command(COMMAND_RATING) {
+            command(Constants.COMMAND_RATING) {
                 val ratings = ratingsRepository
-                    .getRatings()
+                    .getRatingsList()
                     .associate { info ->
                         info.username to info.rating
                     }
@@ -88,8 +88,8 @@ fun main(args: Array<String>) {
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
 
                 message.replyToMessage?.from?.let { user ->
-                    val previousCredit = ratingsRepository.getRating(user.id)?.rating ?: 0L
-                    val info = ratingsRepository.changeRating(user.id, user.username ?: "-", socialCreditChange)
+                    val previousCredit = ratingsRepository.getUserRating(user.id)?.rating ?: 0L
+                    val info = ratingsRepository.updateUserRating(user.id, user.username ?: "-", socialCreditChange)
 
                     val socialCreditChangeText = if (socialCreditChange > 0) {
                         "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Партия гордится тобой \uD83D\uDC4D"
@@ -128,20 +128,10 @@ fun main(args: Array<String>) {
     bot.startPolling()
 }
 
-private fun getBotToken(propertiesFilePath: String): String {
-    return Properties()
-        .apply {
-            FileInputStream(File(propertiesFilePath)).use(::load)
-        }
-        .getProperty(PROPERTY_BOT_TOKEN)
-        ?: throw IllegalStateException("Property named \"$PROPERTY_BOT_TOKEN\" not found in $propertiesFilePath")
-}
-
-// https://www.aspi.org.au/report/uyghurs-sale
 private fun sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, user: User): String? {
     return when {
         previousCredit >= 0L && currentCredit < 0L -> {
-            val job = uyghurCampJobs.random()
+            val job = Jobs.uyghurCampJobs.random()
             "\uD83C\uDF34 Партия отправлять товарищ ${user.printableName} в санаторий для уйгур $job. Партия заботься о простой товарищ! \uD83D\uDC6E️"
         }
 
@@ -157,9 +147,9 @@ private fun Message.getSocialCreditChange(): Long? {
     print("ID: ${sticker?.fileUniqueId}")
 
     return when {
-        plusSocialCreditStickers.contains(sticker?.fileUniqueId) -> DEFAULT_PLUS_CREDIT
-        minusSocialCreditStickers.contains(sticker?.fileUniqueId) -> DEFAULT_MINUS_CREDIT
-        plusRicePlateStickers.contains(sticker?.fileUniqueId) -> DEFAULT_PLUS_RICE_PLATE_CREDIT
+        Stickers.plusSocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.DEFAULT_PLUS_CREDIT
+        Stickers.minusSocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.DEFAULT_MINUS_CREDIT
+        Stickers.plusRicePlateStickers.contains(sticker?.fileUniqueId) -> Constants.DEFAULT_PLUS_RICE_PLATE_CREDIT
         else -> null
     }
 }
