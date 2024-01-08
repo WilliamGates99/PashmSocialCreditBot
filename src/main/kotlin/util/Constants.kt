@@ -2,6 +2,9 @@ package util
 
 object Constants {
 
+    internal const val PROPERTY_BOT_TOKEN = "PROPERTY_BOT_TOKEN"
+    internal const val PROPERTY_LOCAL_DB_PATH = "PROPERTY_LOCAL_DB_PATH"
+
     internal const val DEFAULT_PLUS_CREDIT = 20L
     internal const val DEFAULT_MINUS_CREDIT = -20L
 
@@ -10,8 +13,7 @@ object Constants {
     internal const val COMMAND_RATING = "rating"
     internal const val COMMAND_MY_RATING = "my_rating"
 
-    internal const val PROPERTY_BOT_TOKEN = "PROPERTY_BOT_TOKEN"
-    internal const val PROPERTY_LOCAL_DB_PATH = "PROPERTY_LOCAL_DB_PATH"
+    internal const val RATING_REPO_RATINGS_LIST_SELECTION_LIMIT = 50
 
     internal val plusSocialCreditStickers = arrayOf(
         "AgADAgADf3BGHA",
