@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "1.9.22"
     application
@@ -7,7 +9,7 @@ group = "com.xeniac"
 version = "1.0.0"
 
 kotlin {
-    jvmToolchain(18)
+    jvmToolchain(jdkVersion = 18)
 }
 
 dependencies {
@@ -21,4 +23,24 @@ dependencies {
 
     // SQLite JDBC Library
     implementation("org.xerial:sqlite-jdbc:3.44.1.0")
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "18"
+}
+
+application {
+    mainClass = "MainKt"
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
 }
