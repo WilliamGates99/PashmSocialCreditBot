@@ -13,11 +13,12 @@ import util.PropertiesHelper
 import util.Stickers
 import kotlin.math.absoluteValue
 
-fun main() {
-    val ratingsRepository: RatingRepository = RatingRepositoryImpl(dbPath = PropertiesHelper.getDbPath())
+fun main(args: Array<String>) {
+    val propertiesHelper = PropertiesHelper(propertiesFilePath = args[0])
+    val ratingsRepository: RatingRepository = RatingRepositoryImpl(dbPath = propertiesHelper.getDbPath())
 
     val bot = bot {
-        token = PropertiesHelper.getBotToken()
+        token = propertiesHelper.getBotToken()
 
         dispatch {
             command(Constants.COMMAND_MY_RATING) {
