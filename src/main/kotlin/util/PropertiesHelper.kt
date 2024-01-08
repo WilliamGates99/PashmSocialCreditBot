@@ -22,7 +22,7 @@ object PropertiesHelper {
 
     fun getDbPath(): String {
         return getLocalProperties()
-            .getProperty(Constants.PROPERTY_LOCAL_DB_PATH)
+            .getProperty(Constants.PROPERTY_RATING_DB_PATH)
             ?: throw IllegalStateException("Property named \"${Constants.PROPERTY_BOT_TOKEN}\" was not found.")
     }
 }
