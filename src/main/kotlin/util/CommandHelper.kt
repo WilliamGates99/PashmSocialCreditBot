@@ -26,10 +26,10 @@ object CommandHelper {
 
     fun CommandHandlerEnvironment.showMyCredits(
         message: Message,
-        ratingsRepository: RatingRepository
+        ratingRepository: RatingRepository
     ) {
         message.from?.let { user ->
-            val userRatingInfo = ratingsRepository.getUserRating(
+            val userRatingInfo = ratingRepository.getUserRating(
                 groupId = message.chat.id,
                 userId = user.id
             )
@@ -45,7 +45,7 @@ object CommandHelper {
 
     fun CommandHandlerEnvironment.showOthersCredits(
         message: Message,
-        ratingsRepository: RatingRepository
+        ratingRepository: RatingRepository
     ) {
         val repliedUser = message.replyToMessage?.from
         if (repliedUser == null) {
@@ -68,7 +68,7 @@ object CommandHelper {
                 return
             }
 
-            val userRatingInfo = ratingsRepository.getUserRating(
+            val userRatingInfo = ratingRepository.getUserRating(
                 groupId = message.chat.id,
                 userId = repliedUser.id
             )
