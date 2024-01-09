@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
         dispatch {
             command(Constants.COMMAND_MY_RATING) {
                 message.from?.let { user ->
-                    val info = ratingsRepository.getUserRating(user.id)
+                    val info = ratingsRepository.getUserRating(groupId = message.chat.id, userId = user.id)
                     val userSocialCredit = info?.rating ?: 0L
 
                     bot.sendMessage(
@@ -66,7 +66,8 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                if (message.from?.id == message.replyToMessage?.from?.id) {
+                val isUserReplyingThemself = message.from?.id == message.replyToMessage?.from?.id
+                if (isUserReplyingThemself) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "\uD83D\uDEAB Партия запрещать изменять свой рейтинг. Великий лидер Xi есть следить за тобой!",
@@ -76,7 +77,9 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                if (message.replyToMessage?.from?.username == "CCPSocialCreditBot") { // Dirty hack, IDK how to get self ID
+                val botUser = bot.getMe().get()
+                val isUserReplyingSocialCreditBot = message.replyToMessage?.from?.username == botUser.username
+                if (isUserReplyingSocialCreditBot) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "\uD83D\uDEAB Простой товарищ не может изменять рейтинг великий партия! Великий лидер Xi есть следить за тобой!",
@@ -88,40 +91,121 @@ fun main(args: Array<String>) {
 
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
 
-                message.replyToMessage?.from?.let { user ->
-                    val previousCredit = ratingsRepository.getUserRating(user.id)?.rating ?: 0L
-                    val info = ratingsRepository.updateUserRating(user.id, user.username ?: "-", socialCreditChange)
+                message.replyToMessage?.from?.let { targetUser ->
+                    val messageSender = message.from
 
-                    val socialCreditChangeText = if (socialCreditChange > 0) {
-                        "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Партия гордится тобой \uD83D\uDC4D"
-                    } else {
-                        "Минус ${socialCreditChange.absoluteValue} социальный рейтинг для ${user.printableName}. Ты разочаровываешь партию \uD83D\uDE1E"
+                    val groupId = message.chat.id
+                    val groupTitle = message.chat.title
+
+                    val userId = targetUser.id
+                    val username = targetUser.username
+                    val firstName = targetUser.firstName
+
+                    val chatMember = messageSender?.let { user ->
+                        bot.getChatMember(chatId = ChatId.fromId(groupId), userId = user.id).get()
                     }
 
-                    val sendToUyghurCamp = sendToUyghurCampIfNeeded(
-                        previousCredit = previousCredit,
-                        currentCredit = info.rating,
-                        user = user
-                    )
+                    // TODO: UPDATE
+                    when (chatMember?.status) {
+                        Constants.CHAT_MEMBER_STATUS_CREATOR, Constants.CHAT_MEMBER_STATUS_ADMIN -> {
+                            val previousCredit = ratingsRepository.getUserRating(groupId, userId)?.rating ?: 0L
+                            val updateUserRatingResult = ratingsRepository.updateUserRating(
+                                messageSenderId = messageSender.id,
+                                groupId = groupId,
+                                groupTitle = groupTitle ?: "-",
+                                userId = userId,
+                                username = username ?: "-",
+                                firstName = firstName,
+                                ratingChange = socialCreditChange
+                            )
 
-                    val messageBuilder = StringBuilder().apply {
-                        append(socialCreditChangeText)
-                        append("\n")
-                        append("Текущий социальный рейтинг: ")
-                        append(info.rating)
+                            val socialCreditChangeText = if (socialCreditChange > 0) {
+                                "Плюс ${socialCreditChange.absoluteValue} социальный рейтинг для ${targetUser.printableName}. Партия гордится тобой \uD83D\uDC4D"
+                            } else {
+                                "Минус ${socialCreditChange.absoluteValue} социальный рейтинг для ${targetUser.printableName}. Ты разочаровываешь партию \uD83D\uDE1E"
+                            }
 
-                        sendToUyghurCamp?.let {
-                            append("\n\n")
-                            append(it)
+                            updateUserRatingResult.onSuccess { userRatingInfo ->
+                                val sendToUyghurCampText = sendToUyghurCampIfNeeded(
+                                    previousCredit = previousCredit,
+                                    currentCredit = userRatingInfo.rating,
+                                    user = targetUser
+                                )
+
+//                    val messageBuilder = StringBuilder().apply {
+//                        append(socialCreditChangeText)
+//                        append("\n")
+//                        append("Текущий социальный рейтинг: ")
+//                        append(userRatingInfo.rating)
+//
+//                        sendToUyghurCampText?.let {
+//                            append("\n\n")
+//                            append(it)
+//                        }
+//                    }
+
+                                val messageBuilder = StringBuilder().apply {
+                                    append("\uD83C\uDF45previous user credit = $previousCredit\n")
+                                    append("\uD83C\uDF45social credit change = ${if (socialCreditChange > 0) "+$socialCreditChange" else "$socialCreditChange"}\n\n")
+
+                                    append("\uD83C\uDF45rating info:\n")
+                                    userRatingInfo.apply {
+                                        append("groupId = $groupId\n")
+                                        append("groupTitle = $groupTitle\n")
+                                        append("userId = $userId\n")
+                                        append("username = $username\n")
+                                        append("firstName = $firstName\n")
+                                        append("rating = $rating\n")
+                                        append("createdAt = $createdAt\n")
+                                        append("modifiedAt = $modifiedAt")
+                                    }
+                                }
+
+                                bot.sendMessage(
+                                    chatId = ChatId.fromId(message.chat.id),
+                                    text = messageBuilder.toString(),
+                                    disableNotification = true
+                                )
+                            }
+
+                            updateUserRatingResult.onFailure {
+                                val messageBuilder =   StringBuilder().apply {
+                                    append("cooldown is not over yet")
+                                }
+
+                                bot.sendMessage(
+                                    chatId = ChatId.fromId(message.chat.id),
+                                    text = messageBuilder.toString(),
+                                    disableNotification = true,
+                                    replyToMessageId = message.messageId
+                                )
+                            }
+                        }
+                        Constants.CHAT_MEMBER_STATUS_MEMBER -> {
+                            val messageBuilder = StringBuilder().apply {
+                                append("کاکا سیاه نادان به مزرعه پنبه برگرد")
+                            }
+
+                            bot.sendMessage(
+                                chatId = ChatId.fromId(message.chat.id),
+                                text = messageBuilder.toString(),
+                                disableNotification = true,
+                                replyToMessageId = message.messageId
+                            )
+                        }
+                        else -> {
+                            val messageBuilder = StringBuilder().apply {
+                                append("کاکا سیاه نادان به مزرعه پنبه برگرد")
+                            }
+
+                            bot.sendMessage(
+                                chatId = ChatId.fromId(message.chat.id),
+                                text = messageBuilder.toString(),
+                                disableNotification = true,
+                                replyToMessageId = message.messageId
+                            )
                         }
                     }
-
-
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = messageBuilder.toString(),
-                        disableNotification = true
-                    )
                 }
             }
         }

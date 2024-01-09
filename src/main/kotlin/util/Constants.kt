@@ -5,6 +5,12 @@ object Constants {
     internal const val PROPERTY_BOT_TOKEN = "BOT_TOKEN"
     internal const val PROPERTY_RATING_DB_PATH = "RATING_DB_PATH"
 
+    internal const val CHAT_MEMBER_STATUS_CREATOR = "creator"
+    internal const val CHAT_MEMBER_STATUS_ADMIN = "administrator"
+    internal const val CHAT_MEMBER_STATUS_MEMBER = "member"
+
+    internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
+
     internal const val DEFAULT_PLUS_CREDIT = 20L
     internal const val DEFAULT_MINUS_CREDIT = -20L
 
