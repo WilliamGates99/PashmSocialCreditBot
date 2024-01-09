@@ -92,9 +92,9 @@ object MessageHelper {
                     )
 
                     val socialCreditChangeText = if (socialCreditChange > 0) {
-                        "Plus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}. The party is proud of you comrade\uD83E\uDEE1"
+                        "Plus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}."
                     } else {
-                        "Minus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}. You're disappointing the party comrade\uD83D\uDE1E"
+                        "Minus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}."
                     }
 
                     updateUserRatingResult.onSuccess { userRatingInfo ->
@@ -109,9 +109,19 @@ object MessageHelper {
                             append("\n")
                             append("Current Social Credits: ")
                             append(userRatingInfo.rating)
+                            append("\n\n")
+
+                            when {
+                                userRatingInfo.rating > 100 -> {
+                                    append("The party is proud of you comrade\uD83E\uDEE1")
+                                }
+                                userRatingInfo.rating < 0 -> {
+                                    append("You're disappointing the party comrade\uD83D\uDE1E")
+                                }
+                            }
 
                             sendToUyghurCampText?.let {
-                                append("\n\n")
+                                append("\n\n\n")
                                 append(it)
                             }
                         }

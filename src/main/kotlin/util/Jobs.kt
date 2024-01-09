@@ -21,7 +21,7 @@ object Jobs {
     ): String? {
         return when {
             previousSocialCredit >= 0L && currentSocialCredit < 0L -> {
-                val job = Jobs.uyghurCampJobs.random()
+                val job = uyghurCampJobs.random()
                 "\uD83C\uDF34The party has decided to send Comrade ${user.firstName} to a Uyghur camp where he will be $job. The Party is taking care of the bad citizens.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"
             }
             previousSocialCredit < 0L && currentSocialCredit >= 0L -> {
