@@ -1,4 +1,4 @@
-package presentation
+package util
 
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId

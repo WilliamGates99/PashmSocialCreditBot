@@ -9,14 +9,14 @@ import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.User
 import data.RatingRepository
 import data.RatingRepositoryImpl
-import presentation.CommandHelper.sendNotGroupMessage
-import presentation.CommandHelper.sendStickerSet
-import presentation.CommandHelper.showMyCredits
-import presentation.CommandHelper.showOthersCredits
-import presentation.MessageHelper.sendCreditingBotProhibitionMessage
-import presentation.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
-import presentation.MessageHelper.sendCreditingYourselfProhibitionMessage
-import presentation.MessageHelper.sendNotGroupMessage
+import util.CommandHelper.sendNotGroupMessage
+import util.CommandHelper.sendStickerSet
+import util.CommandHelper.showMyCredits
+import util.CommandHelper.showOthersCredits
+import util.MessageHelper.sendCreditingBotProhibitionMessage
+import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
+import util.MessageHelper.sendCreditingYourselfProhibitionMessage
+import util.MessageHelper.sendNotGroupMessage
 import util.*
 import kotlin.math.absoluteValue
 
@@ -113,6 +113,7 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
+                // TODO: FROM HERE
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
 
                 message.replyToMessage?.from?.let { targetUser ->
