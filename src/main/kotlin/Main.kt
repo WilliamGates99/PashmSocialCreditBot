@@ -1,16 +1,14 @@
 import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
+import com.github.kotlintelegrambot.dispatcher.handlers.CommandHandlerEnvironment
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.User
 import data.RatingRepository
 import data.RatingRepositoryImpl
-import util.Constants
-import util.Jobs
-import util.PropertiesHelper
-import util.Stickers
+import util.*
 import kotlin.math.absoluteValue
 
 fun main(args: Array<String>) {
@@ -21,57 +19,28 @@ fun main(args: Array<String>) {
         token = propertiesHelper.getBotToken()
 
         dispatch {
-            command(Constants.COMMAND_SHOW_MY_CREDITS) {
-                message.from?.let { user ->
-                    val userRatingInfo = ratingsRepository.getUserRating(
-                        groupId = message.chat.id,
-                        userId = user.id
-                    )
-                    val userSocialCredit = userRatingInfo?.rating ?: 0L
+            command(Constants.COMMAND_GET_STICKER_SET) {
+                bot.sendMessage(
+                    chatId = ChatId.fromId(message.chat.id),
+                    text = "Sticker set link:\nhttps://t.me/addstickers/PoohSocialCredit",
+                    replyToMessageId = message.messageId,
+                    disableNotification = true
+                )
+            }
 
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = "The Party informs that Comrade ${user.firstName} ${user.lastName} has $userSocialCredit social credits.",
-                        disableNotification = true
-                    )
+            command(Constants.COMMAND_SHOW_MY_CREDITS) {
+                when (message.chat.type) {
+                    ChatTypes.SUPERGROUP.value -> showMyCredits(message, ratingsRepository)
+                    ChatTypes.GROUP.value -> showMyCredits(message, ratingsRepository)
+                    ChatTypes.PRIVATE.value -> sendNotGroupError(message)
                 }
             }
 
-            command(Constants.COMMAND_SHOW_OTHER_CREDITS) {
-                val repliedUser = message.replyToMessage?.from
-                if (repliedUser == null) {
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = "⚠\uFE0F Reply to someone with /credits to find out their social credits!",
-                        disableNotification = true,
-                        replyToMessageId = message.messageId
-                    )
-
-                    return@command
-                } else {
-                    val isUserReplyingThemself = message.from?.id == repliedUser.id
-                    if (isUserReplyingThemself) {
-                        bot.sendMessage(
-                            chatId = ChatId.fromId(message.chat.id),
-                            text = "⚠\uFE0F Use /mycredits command to find out your social credits!",
-                            disableNotification = true,
-                            replyToMessageId = message.messageId
-                        )
-
-                        return@command
-                    }
-
-                    val userRatingInfo = ratingsRepository.getUserRating(
-                        groupId = message.chat.id,
-                        userId = repliedUser.id
-                    )
-                    val userSocialCredit = userRatingInfo?.rating ?: 0L
-
-                    bot.sendMessage(
-                        chatId = ChatId.fromId(message.chat.id),
-                        text = "The Party informs that Comrade ${repliedUser.firstName} ${repliedUser.lastName} has $userSocialCredit social credits.",
-                        disableNotification = true
-                    )
+            command(Constants.COMMAND_SHOW_OTHERS_CREDITS) {
+                when (message.chat.type) {
+                    ChatTypes.SUPERGROUP.value -> showOthersCredits(message, ratingsRepository)
+                    ChatTypes.GROUP.value -> showOthersCredits(message, ratingsRepository)
+                    ChatTypes.PRIVATE.value -> sendNotGroupError(message)
                 }
             }
 
@@ -113,9 +82,9 @@ fun main(args: Array<String>) {
                 if (isUserReplyingThemself) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "\uD83D\uDEAB Партия запрещать изменять свой рейтинг. Великий лидер Xi есть следить за тобой!",
-                        disableNotification = true,
-                        replyToMessageId = message.messageId
+                        text = "\uD83D\uDEABThe party prohibits crediting yourself. Great Leader Xi is watching over you!",
+                        replyToMessageId = message.messageId,
+                        disableNotification = true
                     )
 
                     return@message
@@ -133,6 +102,8 @@ fun main(args: Array<String>) {
 
                     return@message
                 }
+
+                // TODO: ADD BOT CHECK message.replyToMessage?.from?.isBot
 
                 val socialCreditChange = message.getSocialCreditChange() ?: return@message
 
@@ -258,6 +229,72 @@ fun main(args: Array<String>) {
     bot.startPolling()
 }
 
+private fun CommandHandlerEnvironment.sendNotGroupError(message: Message) {
+    bot.sendMessage(
+        chatId = ChatId.fromId(message.chat.id),
+        text = "Du-uh, The Social Credit System only works in groups.",
+        disableNotification = true
+    )
+}
+
+private fun CommandHandlerEnvironment.showMyCredits(
+    message: Message,
+    ratingsRepository: RatingRepository
+) {
+    message.from?.let { user ->
+        val userRatingInfo = ratingsRepository.getUserRating(
+            groupId = message.chat.id,
+            userId = user.id
+        )
+        val userSocialCredit = userRatingInfo?.rating ?: 0L
+
+        bot.sendMessage(
+            chatId = ChatId.fromId(message.chat.id),
+            text = "The Party informs that Comrade ${user.firstName} has $userSocialCredit social credits.",
+            disableNotification = true
+        )
+    }
+}
+
+private fun CommandHandlerEnvironment.showOthersCredits(
+    message: Message,
+    ratingsRepository: RatingRepository
+) {
+    val repliedUser = message.replyToMessage?.from
+    if (repliedUser == null) {
+        bot.sendMessage(
+            chatId = ChatId.fromId(message.chat.id),
+            text = "⚠\uFE0F Reply to someone with /credits to find out their social credits!",
+            replyToMessageId = message.messageId,
+            disableNotification = true
+        )
+        return
+    } else {
+        val isUserReplyingThemself = message.from?.id == repliedUser.id
+        if (isUserReplyingThemself) {
+            bot.sendMessage(
+                chatId = ChatId.fromId(message.chat.id),
+                text = "⚠\uFE0F Use /mycredits command to find out your social credits!",
+                replyToMessageId = message.messageId,
+                disableNotification = true
+            )
+            return
+        }
+
+        val userRatingInfo = ratingsRepository.getUserRating(
+            groupId = message.chat.id,
+            userId = repliedUser.id
+        )
+        val userSocialCredit = userRatingInfo?.rating ?: 0L
+
+        bot.sendMessage(
+            chatId = ChatId.fromId(message.chat.id),
+            text = "The Party informs that Comrade ${repliedUser.firstName} has $userSocialCredit social credits.",
+            disableNotification = true
+        )
+    }
+}
+
 private fun sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, user: User): String? {
     return when {
         previousCredit >= 0L && currentCredit < 0L -> {
@@ -274,7 +311,8 @@ private fun sendToUyghurCampIfNeeded(previousCredit: Long, currentCredit: Long, 
 }
 
 private fun Message.getSocialCreditChange(): Long? {
-    print("ID: ${sticker?.fileUniqueId}")
+    println("sticker fileUniqueId: ${sticker?.fileUniqueId}")
+    println("sticker fileId: ${sticker?.fileId}")
 
     return when {
         Stickers.plusSocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.DEFAULT_PLUS_CREDIT
