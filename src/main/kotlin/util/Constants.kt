@@ -16,8 +16,9 @@ object Constants {
 
     internal const val DEFAULT_PLUS_RICE_PLATE_CREDIT = 40L
 
-    internal const val COMMAND_RATING = "rating"
-    internal const val COMMAND_MY_RATING = "my_rating"
+    internal const val COMMAND_SHOW_CITIZENS_RANK = "citizensrank"
+    internal const val COMMAND_SHOW_MY_CREDITS = "mycredits"
+    internal const val COMMAND_SHOW_OTHER_CREDITS = "credits"
 
     internal const val RATING_REPO_RATINGS_LIST_SELECTION_LIMIT = 50
 }

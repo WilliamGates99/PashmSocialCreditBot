@@ -21,20 +21,62 @@ fun main(args: Array<String>) {
         token = propertiesHelper.getBotToken()
 
         dispatch {
-            command(Constants.COMMAND_MY_RATING) {
+            command(Constants.COMMAND_SHOW_MY_CREDITS) {
                 message.from?.let { user ->
-                    val info = ratingsRepository.getUserRating(groupId = message.chat.id, userId = user.id)
-                    val userSocialCredit = info?.rating ?: 0L
+                    val userRatingInfo = ratingsRepository.getUserRating(
+                        groupId = message.chat.id,
+                        userId = user.id
+                    )
+                    val userSocialCredit = userRatingInfo?.rating ?: 0L
 
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "Товарищ ${user.printableName}, партия сообщить, что твой социальный рейтинг составлять $userSocialCredit",
+                        text = "The Party informs that Comrade ${user.firstName} ${user.lastName} has $userSocialCredit social credits.",
                         disableNotification = true
                     )
                 }
             }
 
-            command(Constants.COMMAND_RATING) {
+            command(Constants.COMMAND_SHOW_OTHER_CREDITS) {
+                val repliedUser = message.replyToMessage?.from
+                if (repliedUser == null) {
+                    bot.sendMessage(
+                        chatId = ChatId.fromId(message.chat.id),
+                        text = "⚠\uFE0F Reply to someone with /credits to find out their social credits!",
+                        disableNotification = true,
+                        replyToMessageId = message.messageId
+                    )
+
+                    return@command
+                } else {
+                    val isUserReplyingThemself = message.from?.id == repliedUser.id
+                    if (isUserReplyingThemself) {
+                        bot.sendMessage(
+                            chatId = ChatId.fromId(message.chat.id),
+                            text = "⚠\uFE0F Use /mycredits command to find out your social credits!",
+                            disableNotification = true,
+                            replyToMessageId = message.messageId
+                        )
+
+                        return@command
+                    }
+
+                    val userRatingInfo = ratingsRepository.getUserRating(
+                        groupId = message.chat.id,
+                        userId = repliedUser.id
+                    )
+                    val userSocialCredit = userRatingInfo?.rating ?: 0L
+
+                    bot.sendMessage(
+                        chatId = ChatId.fromId(message.chat.id),
+                        text = "The Party informs that Comrade ${repliedUser.firstName} ${repliedUser.lastName} has $userSocialCredit social credits.",
+                        disableNotification = true
+                    )
+                }
+            }
+
+            // TODO: UPDATE RANK COMMAND
+            command(Constants.COMMAND_SHOW_CITIZENS_RANK) {
                 val ratings = ratingsRepository
                     .getRatingsList()
                     .associate { info ->
@@ -57,7 +99,8 @@ fun main(args: Array<String>) {
                 bot.sendMessage(
                     chatId = ChatId.fromId(message.chat.id),
                     text = stringBuilder.toString(),
-                    disableNotification = true
+                    disableNotification = true,
+                    replyToMessageId = message.messageId
                 )
             }
 
@@ -71,7 +114,8 @@ fun main(args: Array<String>) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "\uD83D\uDEAB Партия запрещать изменять свой рейтинг. Великий лидер Xi есть следить за тобой!",
-                        disableNotification = true
+                        disableNotification = true,
+                        replyToMessageId = message.messageId
                     )
 
                     return@message
@@ -83,7 +127,8 @@ fun main(args: Array<String>) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
                         text = "\uD83D\uDEAB Простой товарищ не может изменять рейтинг великий партия! Великий лидер Xi есть следить за тобой!",
-                        disableNotification = true
+                        disableNotification = true,
+                        replyToMessageId = message.messageId
                     )
 
                     return@message
@@ -169,7 +214,7 @@ fun main(args: Array<String>) {
                             }
 
                             updateUserRatingResult.onFailure {
-                                val messageBuilder =   StringBuilder().apply {
+                                val messageBuilder = StringBuilder().apply {
                                     append("cooldown is not over yet")
                                 }
 
