@@ -43,7 +43,7 @@ object MessageHelper {
         )
     }
 
-    fun MessageHandlerEnvironment.sendCoolDownMessage(message: Message) {
+    private fun MessageHandlerEnvironment.sendCoolDownMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
             text = "Slow down, comrade! One vote for the same comrade every 5 minutes.",
@@ -52,7 +52,7 @@ object MessageHelper {
         )
     }
 
-    fun MessageHandlerEnvironment.sendMemberPermissionMessage(message: Message) {
+    private fun MessageHandlerEnvironment.sendMemberPermissionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
             text = "کاکا سیاه نادان به مزرعه پنبه برگرد",
