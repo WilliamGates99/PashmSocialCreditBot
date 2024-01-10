@@ -6,11 +6,11 @@ import data.RatingRepository
 import data.RatingRepositoryImpl
 import util.ChatTypes
 import util.CommandHelper.sendNotGroupMessage
-import util.CommandHelper.sendStickerSet
 import util.CommandHelper.showGroupSocialCreditsList
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
 import util.Constants
+import util.Constants.MESSAGE_GET_STICKER_SET
 import util.Constants.MESSAGE_LONG_LIVE_THE_KING
 import util.Constants.MESSAGE_WOMEN
 import util.MessageHelper.sendCreditingBotProhibitionMessage
@@ -18,6 +18,7 @@ import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
 import util.MessageHelper.sendLongLiveTheKingSticker
 import util.MessageHelper.sendNotGroupMessage
+import util.MessageHelper.sendStickerSet
 import util.MessageHelper.sendUpdateUserSocialCreditResultMessage
 import util.MessageHelper.sendWomenGif
 import util.PropertiesHelper
@@ -32,10 +33,6 @@ fun main(args: Array<String>) {
         token = propertiesHelper.getBotToken()
 
         dispatch {
-            command(Constants.COMMAND_GET_STICKER_SET) {
-                sendStickerSet(message)
-            }
-
             command(Constants.COMMAND_SHOW_MY_CREDITS) {
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> showMyCredits(message, ratingRepository)
@@ -60,11 +57,23 @@ fun main(args: Array<String>) {
             }
 
             message {
+                val shouldSendStickerSet = message.text?.lowercase(Locale.US) == MESSAGE_GET_STICKER_SET
+                if (shouldSendStickerSet) {
+                    when (message.chat.type) {
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> Unit
+                        ChatTypes.PRIVATE.value -> sendStickerSet(message)
+                    }
+                    return@message
+                }
+
                 val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
                 val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
                 val shouldSendLongLiveTheKingSticker = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
                 if (shouldSendLongLiveTheKingSticker) {
-                    sendLongLiveTheKingSticker(message)
+                    when (message.chat.type) {
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendLongLiveTheKingSticker(message)
+                        ChatTypes.PRIVATE.value -> Unit
+                    }
                     return@message
                 }
 
@@ -72,13 +81,18 @@ fun main(args: Array<String>) {
                 val captionContainsWomen = message.caption?.lowercase(Locale.US) == MESSAGE_WOMEN
                 val shouldSendWomenGif = messageContainsWomen || captionContainsWomen
                 if (shouldSendWomenGif) {
-                    sendWomenGif(message)
+                    when (message.chat.type) {
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendWomenGif(message)
+                        ChatTypes.PRIVATE.value -> Unit
+                    }
                     return@message
                 }
 
                 if (message.sticker == null || message.replyToMessage?.from == null) {
                     return@message
                 }
+
+                val socialCreditsChange = message.getSocialCreditChange() ?: return@message
 
                 val isUserReplyingThemself = message.from?.id == message.replyToMessage?.from?.id
                 if (isUserReplyingThemself) {
@@ -114,8 +128,6 @@ fun main(args: Array<String>) {
 
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                        val socialCreditsChange = message.getSocialCreditChange() ?: return@message
-
                         sendUpdateUserSocialCreditResultMessage(
                             message = message,
                             socialCreditsChange = socialCreditsChange,

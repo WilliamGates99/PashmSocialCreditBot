@@ -7,16 +7,6 @@ import data.RatingRepository
 
 object CommandHelper {
 
-    fun CommandHandlerEnvironment.sendStickerSet(message: Message) {
-        bot.sendSticker(
-            chatId = ChatId.fromId(message.chat.id),
-            sticker = Stickers.STICKER_SET_FILE_ID,
-            replyToMessageId = message.messageId,
-            disableNotification = true,
-            replyMarkup = null
-        )
-    }
-
     fun CommandHandlerEnvironment.sendNotGroupMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),

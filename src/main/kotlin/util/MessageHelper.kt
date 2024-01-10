@@ -5,9 +5,20 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
+import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import kotlin.math.absoluteValue
 
 object MessageHelper {
+
+    fun MessageHandlerEnvironment.sendStickerSet(message: Message) {
+        bot.sendSticker(
+            chatId = ChatId.fromId(message.chat.id),
+            sticker = Stickers.STICKER_SET_FILE_ID,
+            replyToMessageId = message.messageId,
+            disableNotification = true,
+            replyMarkup = null
+        )
+    }
 
     fun MessageHandlerEnvironment.sendLongLiveTheKingSticker(message: Message) {
         bot.sendSticker(
@@ -116,37 +127,42 @@ object MessageHelper {
                     )
 
                     val socialCreditChangeText = if (socialCreditsChange > 0) {
-                        "Plus ${socialCreditsChange.absoluteValue} social credits for ${targetUser.firstName}."
+                        "Plus ${socialCreditsChange.absoluteValue} social credits for $firstName."
                     } else {
-                        "Minus ${socialCreditsChange.absoluteValue} social credits for ${targetUser.firstName}."
+                        "Minus ${socialCreditsChange.absoluteValue} social credits for $firstName."
                     }
 
                     updateUserSocialCreditsResult.onSuccess { userSocialCreditsInfo ->
-                        val sendToUyghurCampText = Jobs.sendToUyghurCampIfNeeded(
-                            previousSocialCredits = previousSocialCredits,
-                            currentSocialCredits = userSocialCreditsInfo.socialCredits,
-                            user = targetUser
-                        )
+                        val currentSocialCredits = userSocialCreditsInfo.socialCredits
+                        val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
+                        val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
 
                         val messageBuilder = StringBuilder().apply {
                             append(socialCreditChangeText)
                             append("\n")
                             append("Current Social Credits: ")
-                            append(userSocialCreditsInfo.socialCredits)
-                            append("\n\n")
+                            append(currentSocialCredits)
 
                             when {
-                                userSocialCreditsInfo.socialCredits > 100 -> {
+                                currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
+                                    append("\n\n")
                                     append("\uD83E\uDEE1The party is proud of you comrade.")
                                 }
-                                userSocialCreditsInfo.socialCredits < 0 -> {
+                                currentSocialCredits < 0 -> {
+                                    append("\n\n")
                                     append("\uD83D\uDE1EYou're disappointing the party comrade.")
                                 }
                             }
 
-                            sendToUyghurCampText?.let {
+                            if (isSendingToUyghurCamp) {
+                                val uyghurJob = Jobs.uyghurCampJobs.random()
                                 append("\n\n\n")
-                                append(it)
+                                append("\uD83C\uDF34The party has decided to send Comrade $firstName to a Uyghur camp where he will be $uyghurJob. The Party is taking care of the bad comrades.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                            }
+
+                            if (isReturningFromUyghurCamp) {
+                                append("\n\n\n")
+                                append("\uD83C\uDFE1The party has decided to return comrade $firstName from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                             }
                         }
 
@@ -156,7 +172,7 @@ object MessageHelper {
                             disableNotification = true
                         )
 
-                        if (sendToUyghurCampText != null) {
+                        if (isSendingToUyghurCamp) {
                             bot.sendAnimation(
                                 chatId = ChatId.fromId(message.chat.id),
                                 animation = TelegramFile.ByFileId(Gifs.POOH_AND_CJ_FILE_ID),
@@ -164,7 +180,7 @@ object MessageHelper {
                             )
                         }
 
-                        if (userSocialCreditsInfo.socialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
+                        if (currentSocialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
                             bot.sendAnimation(
                                 chatId = ChatId.fromId(message.chat.id),
                                 animation = TelegramFile.ByFileId(Gifs.POOH_DANCING_FILE_ID),
