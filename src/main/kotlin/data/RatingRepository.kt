@@ -1,17 +1,17 @@
 package data
 
-import domain.model.UserRatingInfo
+import domain.model.UserSocialCreditsInfo
 
 interface RatingRepository {
 
-    fun getRatingsList(): List<UserRatingInfo>
+    fun getGroupSocialCreditsList(groupId: Long): List<UserSocialCreditsInfo>
 
-    fun getUserRating(
+    fun getUserSocialCredits(
         groupId: Long,
         userId: Long
-    ): UserRatingInfo?
+    ): UserSocialCreditsInfo?
 
-    fun updateUserRating(
+    fun updateUserSocialCredits(
         messageSenderId: Long,
         groupId: Long,
         groupTitle: String,
@@ -19,5 +19,5 @@ interface RatingRepository {
         username: String,
         firstName: String,
         socialCreditsChange: Long
-    ): Result<UserRatingInfo>
+    ): Result<UserSocialCreditsInfo>
 }

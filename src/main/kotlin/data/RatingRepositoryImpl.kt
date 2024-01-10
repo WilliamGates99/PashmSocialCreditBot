@@ -2,9 +2,9 @@ package data
 
 import data.dto.UserRatingsHistoryEntity
 import data.dto.UserRatingsHistoryTable
-import data.dto.UserSocialCreditEntity
+import data.dto.UserSocialCreditsEntity
 import data.dto.UsersSocialCreditsTable
-import domain.model.UserRatingInfo
+import domain.model.UserSocialCreditsInfo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import util.Constants
@@ -21,28 +21,28 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         }
     }
 
-    override fun getRatingsList(): List<UserRatingInfo> {
+    override fun getGroupSocialCreditsList(groupId: Long): List<UserSocialCreditsInfo> {
         return transaction {
-            UserSocialCreditEntity
-                .all()
-                .limit(Constants.RATING_REPO_RATINGS_LIST_SELECTION_LIMIT)
-                .map { it.toUserRatingInfo() }
-                .sortedByDescending { it.socialCredits }
+            UserSocialCreditsEntity
+                .find { UsersSocialCreditsTable.groupId eq groupId }
+                .orderBy(Pair(UsersSocialCreditsTable.socialCredits, SortOrder.DESC))
+                .limit(Constants.GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT)
+                .map { it.toUserSocialCreditsInfo() }
         }
     }
 
-    override fun getUserRating(
+    override fun getUserSocialCredits(
         groupId: Long,
         userId: Long
-    ): UserRatingInfo? {
+    ): UserSocialCreditsInfo? {
         return transaction {
-            UserSocialCreditEntity
+            UserSocialCreditsEntity
                 .find { (UsersSocialCreditsTable.groupId eq groupId) and (UsersSocialCreditsTable.userId eq userId) }
-                .singleOrNull()?.toUserRatingInfo()
+                .singleOrNull()?.toUserSocialCreditsInfo()
         }
     }
 
-    override fun updateUserRating(
+    override fun updateUserSocialCredits(
         messageSenderId: Long,
         groupId: Long,
         groupTitle: String,
@@ -50,7 +50,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         username: String,
         firstName: String,
         socialCreditsChange: Long
-    ): Result<UserRatingInfo> {
+    ): Result<UserSocialCreditsInfo> {
         return transaction {
             var ratingStatus: String? = null
             val currentTimeInMillis = System.currentTimeMillis()
@@ -74,7 +74,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 this.modifiedAt = currentTimeInMillis
             }
 
-            val userRating = UserSocialCreditEntity
+            val userRating = UserSocialCreditsEntity
                 .find { (UsersSocialCreditsTable.groupId eq groupId) and (UsersSocialCreditsTable.userId eq userId) }
                 .singleOrNull()?.apply {
                     this.groupTitle = groupTitle
@@ -83,7 +83,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     this.socialCredits += socialCreditsChange
                     this.modifiedAt = currentTimeInMillis
                     ratingStatus = "updated"
-                } ?: UserSocialCreditEntity.new {
+                } ?: UserSocialCreditsEntity.new {
                 this.groupId = groupId
                 this.groupTitle = groupTitle
                 this.userId = userId
@@ -95,7 +95,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 ratingStatus = "created"
             }
 
-            Result.success(userRating.toUserRatingInfo().also {
+            Result.success(userRating.toUserSocialCreditsInfo().also {
                 println("User social credits $ratingStatus: $it")
             })
         }

@@ -30,7 +30,7 @@ object CommandHelper {
         ratingRepository: RatingRepository
     ) {
         message.from?.let { user ->
-            val userRatingInfo = ratingRepository.getUserRating(
+            val userRatingInfo = ratingRepository.getUserSocialCredits(
                 groupId = message.chat.id,
                 userId = user.id
             )
@@ -69,7 +69,7 @@ object CommandHelper {
                 return
             }
 
-            val userRatingInfo = ratingRepository.getUserRating(
+            val userRatingInfo = ratingRepository.getUserSocialCredits(
                 groupId = message.chat.id,
                 userId = repliedUser.id
             )
@@ -81,5 +81,40 @@ object CommandHelper {
                 disableNotification = true
             )
         }
+    }
+
+    fun CommandHandlerEnvironment.showGroupSocialCreditsList(
+        message: Message,
+        ratingRepository: RatingRepository
+    ) {
+        val groupSocialCreditsList = ratingRepository
+            .getGroupSocialCreditsList(message.chat.id)
+            .associate { userSocialCreditsInfo ->
+                userSocialCreditsInfo.firstName to userSocialCreditsInfo.socialCredits
+            }
+
+        val stringBuilder = StringBuilder().apply {
+            append("\uD83D\uDCE3Comrades, listen carefully!")
+            append("\n")
+            append("\uD83D\uDCDCIn the name of our great leader Xi, the party has published a list of the top comrades based on their social credits:")
+            append("\n\n")
+        }
+
+        groupSocialCreditsList.forEach { (firstName, socialCredits) ->
+            stringBuilder.apply {
+                when {
+                    socialCredits > 0 -> append("\uD83D\uDC4D\uD83C\uDFFBThe party is proud of comrade $firstName with $socialCredits social credits.")
+                    socialCredits == 0L -> append("Comrade $firstName has 0 social credits.")
+                    else -> append("\uD83D\uDC4E\uD83C\uDFFBWow! Comrade $firstName, you have disappointed the party with your $socialCredits social credits.")
+                }
+                append("\n")
+            }
+        }
+
+        bot.sendMessage(
+            chatId = ChatId.fromId(message.chat.id),
+            text = stringBuilder.toString(),
+            disableNotification = true
+        )
     }
 }

@@ -2,12 +2,12 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
-import com.github.kotlintelegrambot.entities.ChatId
 import data.RatingRepository
 import data.RatingRepositoryImpl
 import util.ChatTypes
 import util.CommandHelper.sendNotGroupMessage
 import util.CommandHelper.sendStickerSet
+import util.CommandHelper.showGroupSocialCreditsList
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
 import util.Constants
@@ -50,33 +50,13 @@ fun main(args: Array<String>) {
                 }
             }
 
-            // TODO: UPDATE RANK COMMAND
-            command(Constants.COMMAND_SHOW_CITIZENS_RANK) {
-                val ratings = ratingRepository
-                    .getRatingsList()
-                    .associate { info ->
-                        info.username to info.socialCredits
+            command(Constants.COMMAND_SHOW_COMRADES_RANK) {
+                when (message.chat.type) {
+                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
+                        showGroupSocialCreditsList(message, ratingRepository)
                     }
-
-                val stringBuilder = StringBuilder().apply {
-                    append("⚡ Товарищ, слушай внимательно великий лидер Xi!\n")
-                    append("\uD83D\uDCC8 Партия публиковать списки социальный рейтинг:\n\n")
+                    ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
                 }
-
-                ratings.forEach { (username, credit) ->
-                    if (credit > 0) {
-                        stringBuilder.append("\uD83D\uDC4D Партия гордится товарищ $username с рейтинг $credit\n")
-                    } else {
-                        stringBuilder.append("\uD83D\uDC4E Ну и ну! Товарищ $username разочаровывай партия своим рейтинг $credit\n")
-                    }
-                }
-
-                bot.sendMessage(
-                    chatId = ChatId.fromId(message.chat.id),
-                    text = stringBuilder.toString(),
-                    disableNotification = true,
-                    replyToMessageId = message.messageId
-                )
             }
 
             message {
