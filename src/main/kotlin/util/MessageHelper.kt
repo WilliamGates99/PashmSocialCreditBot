@@ -9,7 +9,7 @@ import kotlin.math.absoluteValue
 
 object MessageHelper {
 
-    fun MessageHandlerEnvironment.sendLongLiveTheKingSticker(message:Message){
+    fun MessageHandlerEnvironment.sendLongLiveTheKingSticker(message: Message) {
         bot.sendSticker(
             chatId = ChatId.fromId(message.chat.id),
             sticker = Stickers.HOLY_KING_FILE_ID,
@@ -19,7 +19,7 @@ object MessageHelper {
         )
     }
 
-    fun MessageHandlerEnvironment.sendWomenGif(message: Message){
+    fun MessageHandlerEnvironment.sendWomenGif(message: Message) {
         bot.sendAnimation(
             chatId = ChatId.fromId(message.chat.id),
             animation = TelegramFile.ByFileId(Gifs.WOMEN_FILE_ID),
@@ -100,8 +100,12 @@ object MessageHelper {
 
             when (chatMember?.status) {
                 Constants.CHAT_MEMBER_STATUS_CREATOR, Constants.CHAT_MEMBER_STATUS_ADMIN -> {
-                    val previousCredit = ratingRepository.getUserRating(groupId, userId)?.socialCredits ?: 0L
-                    val updateUserRatingResult = ratingRepository.updateUserRating(
+                    val previousSocialCredits = ratingRepository.getUserSocialCredits(
+                        groupId = groupId,
+                        userId = userId
+                    )?.socialCredits ?: 0L
+
+                    val updateUserSocialCreditsResult = ratingRepository.updateUserSocialCredits(
                         messageSenderId = messageSender.id,
                         groupId = groupId,
                         groupTitle = groupTitle ?: "-",
@@ -117,10 +121,10 @@ object MessageHelper {
                         "Minus ${socialCreditsChange.absoluteValue} social credits for ${targetUser.firstName}."
                     }
 
-                    updateUserRatingResult.onSuccess { userRatingInfo ->
+                    updateUserSocialCreditsResult.onSuccess { userSocialCreditsInfo ->
                         val sendToUyghurCampText = Jobs.sendToUyghurCampIfNeeded(
-                            previousSocialCredit = previousCredit,
-                            currentSocialCredit = userRatingInfo.socialCredits,
+                            previousSocialCredits = previousSocialCredits,
+                            currentSocialCredits = userSocialCreditsInfo.socialCredits,
                             user = targetUser
                         )
 
@@ -128,14 +132,14 @@ object MessageHelper {
                             append(socialCreditChangeText)
                             append("\n")
                             append("Current Social Credits: ")
-                            append(userRatingInfo.socialCredits)
+                            append(userSocialCreditsInfo.socialCredits)
                             append("\n\n")
 
                             when {
-                                userRatingInfo.socialCredits > 100 -> {
+                                userSocialCreditsInfo.socialCredits > 100 -> {
                                     append("\uD83E\uDEE1The party is proud of you comrade.")
                                 }
-                                userRatingInfo.socialCredits < 0 -> {
+                                userSocialCreditsInfo.socialCredits < 0 -> {
                                     append("\uD83D\uDE1EYou're disappointing the party comrade.")
                                 }
                             }
@@ -160,7 +164,7 @@ object MessageHelper {
                             )
                         }
 
-                        if (userRatingInfo.socialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
+                        if (userSocialCreditsInfo.socialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
                             bot.sendAnimation(
                                 chatId = ChatId.fromId(message.chat.id),
                                 animation = TelegramFile.ByFileId(Gifs.POOH_DANCING_FILE_ID),
@@ -169,7 +173,7 @@ object MessageHelper {
                         }
                     }
 
-                    updateUserRatingResult.onFailure {
+                    updateUserSocialCreditsResult.onFailure {
                         sendCoolDownMessage(message)
                     }
                 }
