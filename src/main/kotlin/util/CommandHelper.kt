@@ -3,6 +3,7 @@ package util
 import com.github.kotlintelegrambot.dispatcher.handlers.CommandHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.ParseMode
 import data.RatingRepository
 import util.Constants.COMMAND_SHOW_MY_CREDITS
 import util.Constants.COMMAND_SHOW_OTHERS_CREDITS
@@ -30,7 +31,7 @@ object CommandHelper {
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "The Party informs that Comrade <b>${user.firstName}</b> has $userSocialCredit social credits.",
+                text = "The Party informs that Comrade *${user.firstName}* has $userSocialCredit social credits.",
                 disableNotification = true
             )
         }
@@ -69,8 +70,9 @@ object CommandHelper {
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "The Party informs that Comrade <b>${repliedUser.firstName}</b> has $userSocialCredit social credits.",
-                disableNotification = true
+                text = "The Party informs that Comrade *${repliedUser.firstName}* has $userSocialCredit social credits.",
+                disableNotification = true,
+                parseMode = ParseMode.MARKDOWN
             )
         }
     }
@@ -84,18 +86,18 @@ object CommandHelper {
             .getGroupSocialCreditsList(groupId = message.chat.id)
 
         if (groupSocialCreditsList.isEmpty()) {
-            stringBuilder.append("Every comrade has 0 social credits. Be careful, <b>great Leader Xi</b> is watching over you!")
+            stringBuilder.append("Every comrade has 0 social credits. Be careful, *great Leader Xi* is watching over you!")
         } else {
             stringBuilder.apply {
                 append("\uD83D\uDCE3Comrades, listen carefully!")
                 append("\n")
-                append("\uD83D\uDCDCIn the name of our <b>great leader Xi</b>, the party has published a list of the top comrades based on their social credits:")
+                append("\uD83D\uDCDCIn the name of our *great leader Xi*, the party has published a list of the top comrades based on their social credits:")
                 append("\n\n\n")
             }
 
             groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
                 stringBuilder.apply {
-                    userSocialCreditsInfo.apply { append("${index + 1}. $firstName — $socialCredits") }
+                    userSocialCreditsInfo.apply { append("${index + 1}. $firstName with $socialCredits credits") }
                     append("\n")
                 }
             }
@@ -104,7 +106,8 @@ object CommandHelper {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
             text = stringBuilder.toString(),
-            disableNotification = true
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
         )
     }
 }

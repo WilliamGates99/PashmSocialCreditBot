@@ -3,6 +3,7 @@ package util
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.ParseMode
 import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
@@ -49,36 +50,40 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingYourselfProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting yourself. <b>Great Leader Xi</b> is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting yourself. *Great Leader Xi* is watching over you!",
             replyToMessageId = message.messageId,
-            disableNotification = true
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
         )
     }
 
     fun MessageHandlerEnvironment.sendCreditingSocialCreditBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of a great party! <b>Great Leader Xi</b> is watching over you!",
+            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of a great party! *Great Leader Xi* is watching over you!",
             replyToMessageId = message.messageId,
-            disableNotification = true
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
         )
     }
 
     fun MessageHandlerEnvironment.sendCreditingBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting bots. <b>Great Leader Xi</b> is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting bots. *Great Leader Xi* is watching over you!",
             replyToMessageId = message.messageId,
-            disableNotification = true
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
         )
     }
 
     private fun MessageHandlerEnvironment.sendCoolDownMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "Slow down, comrade! One vote for the same comrade every <b>$RATING_COOL_DOWN_IN_MINUTES minutes</b>.",
+            text = "Slow down, comrade! One vote for the same comrade every *$RATING_COOL_DOWN_IN_MINUTES minutes*.",
             replyToMessageId = message.messageId,
-            disableNotification = true
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
         )
     }
 
@@ -133,13 +138,13 @@ object MessageHelper {
                         val messageBuilder = StringBuilder().apply {
                             when {
                                 currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
-                                    append("\uD83E\uDEE1The party is proud of comrade <b>$firstName</b> with $currentSocialCredits social credits.")
+                                    append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                                 }
                                 currentSocialCredits < 0 -> {
-                                    append("\uD83D\uDE1EWow! Comrade <b>$firstName</b> is disappointing the party with $currentSocialCredits social credits.")
+                                    append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
                                 }
                                 else -> {
-                                    append("Comrade <b>$firstName</b> has $currentSocialCredits social credits.")
+                                    append("Comrade *$firstName* has $currentSocialCredits social credits.")
                                 }
                             }
 
@@ -158,7 +163,8 @@ object MessageHelper {
                         bot.sendMessage(
                             chatId = ChatId.fromId(message.chat.id),
                             text = messageBuilder.toString(),
-                            disableNotification = true
+                            disableNotification = true,
+                            parseMode = ParseMode.MARKDOWN
                         )
 
                         if (isSendingToUyghurCamp) {
