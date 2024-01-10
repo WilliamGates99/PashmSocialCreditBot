@@ -32,7 +32,8 @@ object CommandHelper {
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
                 text = "The Party informs that Comrade *${user.firstName}* has $userSocialCredit social credits.",
-                disableNotification = true
+                disableNotification = true,
+                parseMode = ParseMode.MARKDOWN
             )
         }
     }
@@ -92,7 +93,7 @@ object CommandHelper {
                 append("\uD83D\uDCE3Comrades, listen carefully!")
                 append("\n")
                 append("\uD83D\uDCDCIn the name of our *great leader Xi*, the party has published a list of the top comrades based on their social credits:")
-                append("\n\n\n")
+                append("\n\n")
             }
 
             groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
