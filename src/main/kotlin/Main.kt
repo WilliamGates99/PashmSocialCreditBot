@@ -66,8 +66,10 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
-                val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
+                val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US)
+                    ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true
+                val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US)
+                    ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true
                 val shouldSendLongLiveTheKingSticker = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
                 if (shouldSendLongLiveTheKingSticker) {
                     when (message.chat.type) {

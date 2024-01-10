@@ -6,7 +6,7 @@ import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
-import kotlin.math.absoluteValue
+import util.Constants.RATING_COOL_DOWN_IN_MINUTES
 
 object MessageHelper {
 
@@ -49,7 +49,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingYourselfProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting yourself. Great Leader Xi is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting yourself. <b>Great Leader Xi</b> is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -58,7 +58,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingSocialCreditBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of a great party! Great Leader Xi is watching over you!",
+            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of a great party! <b>Great Leader Xi</b> is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -67,7 +67,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting bots. Great Leader Xi is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting bots. <b>Great Leader Xi</b> is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -76,7 +76,7 @@ object MessageHelper {
     private fun MessageHandlerEnvironment.sendCoolDownMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "Slow down, comrade! One vote for the same comrade every 5 minutes.",
+            text = "Slow down, comrade! One vote for the same comrade every <b>$RATING_COOL_DOWN_IN_MINUTES minutes</b>.",
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -125,43 +125,33 @@ object MessageHelper {
                         socialCreditsChange = socialCreditsChange
                     )
 
-                    val socialCreditChangeText = if (socialCreditsChange > 0) {
-                        "Plus ${socialCreditsChange.absoluteValue} social credits for $firstName."
-                    } else {
-                        "Minus ${socialCreditsChange.absoluteValue} social credits for $firstName."
-                    }
-
                     updateUserSocialCreditsResult.onSuccess { userSocialCreditsInfo ->
                         val currentSocialCredits = userSocialCreditsInfo.socialCredits
                         val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
                         val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
 
                         val messageBuilder = StringBuilder().apply {
-                            append(socialCreditChangeText)
-                            append("\n")
-                            append("Current Social Credits: ")
-                            append(currentSocialCredits)
-
                             when {
                                 currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
-                                    append("\n\n")
-                                    append("\uD83E\uDEE1The party is proud of you comrade.")
+                                    append("\uD83E\uDEE1The party is proud of comrade <b>$firstName</b> with $currentSocialCredits social credits.")
                                 }
                                 currentSocialCredits < 0 -> {
-                                    append("\n\n")
-                                    append("\uD83D\uDE1EYou're disappointing the party comrade.")
+                                    append("\uD83D\uDE1EWow! Comrade <b>$firstName</b> is disappointing the party with $currentSocialCredits social credits.")
+                                }
+                                else -> {
+                                    append("Comrade <b>$firstName</b> has $currentSocialCredits social credits.")
                                 }
                             }
 
                             if (isSendingToUyghurCamp) {
                                 val uyghurJob = Jobs.uyghurCampJobs.random()
                                 append("\n\n\n")
-                                append("\uD83C\uDF34The party has decided to send Comrade $firstName to a Uyghur camp where he will be $uyghurJob. The Party is taking care of the bad comrades.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                                append("\uD83C\uDF34The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob. The Party is taking care of the bad comrades.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                             }
 
                             if (isReturningFromUyghurCamp) {
                                 append("\n\n\n")
-                                append("\uD83C\uDFE1The party has decided to return comrade $firstName from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                                append("\uD83C\uDFE1The party has decided to return comrade from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                             }
                         }
 

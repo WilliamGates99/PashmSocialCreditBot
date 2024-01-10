@@ -17,6 +17,7 @@ object Constants {
     internal const val MESSAGE_LONG_LIVE_THE_KING = "long live the king"
     internal const val MESSAGE_WOMEN = "women☕\uFE0F"
 
+    internal const val RATING_COOL_DOWN_IN_MINUTES = 5
     internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
     internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 10
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 100L

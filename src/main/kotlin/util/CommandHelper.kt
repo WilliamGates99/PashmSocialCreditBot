@@ -4,6 +4,8 @@ import com.github.kotlintelegrambot.dispatcher.handlers.CommandHandlerEnvironmen
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import data.RatingRepository
+import util.Constants.COMMAND_SHOW_MY_CREDITS
+import util.Constants.COMMAND_SHOW_OTHERS_CREDITS
 
 object CommandHelper {
 
@@ -28,7 +30,7 @@ object CommandHelper {
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "The Party informs that Comrade ${user.firstName} has $userSocialCredit social credits.",
+                text = "The Party informs that Comrade <b>${user.firstName}</b> has $userSocialCredit social credits.",
                 disableNotification = true
             )
         }
@@ -42,7 +44,7 @@ object CommandHelper {
         if (repliedUser == null) {
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "⚠\uFE0FReply to someone with /credits to find out their social credits!",
+                text = "⚠\uFE0FReply to someone with /$COMMAND_SHOW_OTHERS_CREDITS to find out their social credits!",
                 replyToMessageId = message.messageId,
                 disableNotification = true
             )
@@ -52,7 +54,7 @@ object CommandHelper {
             if (isUserReplyingThemself) {
                 bot.sendMessage(
                     chatId = ChatId.fromId(message.chat.id),
-                    text = "⚠\uFE0FUse /mycredits command to find out your social credits!",
+                    text = "⚠\uFE0FUse /$COMMAND_SHOW_MY_CREDITS command to find out your social credits!",
                     replyToMessageId = message.messageId,
                     disableNotification = true
                 )
@@ -67,7 +69,7 @@ object CommandHelper {
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "The Party informs that Comrade ${repliedUser.firstName} has $userSocialCredit social credits.",
+                text = "The Party informs that Comrade <b>${repliedUser.firstName}</b> has $userSocialCredit social credits.",
                 disableNotification = true
             )
         }
@@ -77,29 +79,23 @@ object CommandHelper {
         message: Message,
         ratingRepository: RatingRepository
     ) {
+        val stringBuilder = StringBuilder()
         val groupSocialCreditsList = ratingRepository
             .getGroupSocialCreditsList(groupId = message.chat.id)
-            .associate { userSocialCreditsInfo ->
-                userSocialCreditsInfo.firstName to userSocialCreditsInfo.socialCredits
-            }
-
-        val stringBuilder = StringBuilder().apply {
-            append("\uD83D\uDCE3Comrades, listen carefully!")
-            append("\n")
-            append("\uD83D\uDCDCIn the name of our great leader Xi, the party has published a list of the top comrades based on their social credits:")
-            append("\n\n")
-        }
 
         if (groupSocialCreditsList.isEmpty()) {
-            stringBuilder.append("Every comrade has 0 social credits. Great Leader Xi is watching over you!")
+            stringBuilder.append("Every comrade has 0 social credits. Be careful, <b>great Leader Xi</b> is watching over you!")
         } else {
-            groupSocialCreditsList.forEach { (firstName, socialCredits) ->
+            stringBuilder.apply {
+                append("\uD83D\uDCE3Comrades, listen carefully!")
+                append("\n")
+                append("\uD83D\uDCDCIn the name of our <b>great leader Xi</b>, the party has published a list of the top comrades based on their social credits:")
+                append("\n\n\n")
+            }
+
+            groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
                 stringBuilder.apply {
-                    when {
-                        socialCredits > 0 -> append("\uD83D\uDC4D\uD83C\uDFFBThe party is proud of comrade $firstName with $socialCredits social credits.")
-                        socialCredits == 0L -> append("Comrade $firstName has 0 social credits.")
-                        else -> append("\uD83D\uDC4E\uD83C\uDFFBWow! Comrade $firstName, you have disappointed the party with your $socialCredits social credits.")
-                    }
+                    userSocialCreditsInfo.apply { append("${index + 1}. $firstName — $socialCredits") }
                     append("\n")
                 }
             }
