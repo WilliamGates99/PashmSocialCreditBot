@@ -1,0 +1,9 @@
+package util
+
+object Gifs {
+
+    internal const val COTTON_FARM_FILE_ID = "CgACAgQAAxkBAANfZZ6fI3peqNrZvmxeP_OXbV1DVT0AAl8GAAK1GSBRIB_fe0osYoY0BA"
+    internal const val WOMEN_FILE_ID = "CgACAgQAAxkBAANdZZ6dwiCXGI4zHtRqHheMmWhlPt0AAloQAAIxFUFQ58yBz5cnU9A0BA"
+    internal const val POOH_AND_CJ_FILE_ID = "CgACAgQAAxkBAANZZZ6c5ydjcfJI9VHCZb9V3RNol3UAAqAEAAJpHGQHyeUWCiOJcY00BA"
+    internal const val POOH_DANCING_FILE_ID = "CgACAgQAAxkBAANbZZ6dJ5hK2sE02TkojiR7RQboxLwAAgYDAAJ5th1T3y4VFIdxfD40BA"
+}

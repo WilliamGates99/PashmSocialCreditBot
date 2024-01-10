@@ -9,17 +9,19 @@ object Constants {
     internal const val CHAT_MEMBER_STATUS_ADMIN = "administrator"
     internal const val CHAT_MEMBER_STATUS_MEMBER = "member"
 
-    internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
-
-    internal const val DEFAULT_PLUS_CREDIT = 20L
-    internal const val DEFAULT_MINUS_CREDIT = -20L
-
-    internal const val DEFAULT_PLUS_RICE_PLATE_CREDIT = 40L
-
     internal const val COMMAND_GET_STICKER_SET = "stickers"
     internal const val COMMAND_SHOW_CITIZENS_RANK = "citizensrank"
     internal const val COMMAND_SHOW_MY_CREDITS = "mycredits"
     internal const val COMMAND_SHOW_OTHERS_CREDITS = "credits"
 
+    internal const val MESSAGE_LONG_LIVE_THE_KING = "long live the king"
+    internal const val MESSAGE_WOMEN = "women☕\uFE0F"
+
+    internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
     internal const val RATING_REPO_RATINGS_LIST_SELECTION_LIMIT = 50
+    internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
+
+    internal const val DEFAULT_PLUS_CREDIT = 20L
+    internal const val DEFAULT_MINUS_CREDIT = -20L
+    internal const val DEFAULT_PLUS_RICE_PLATE_CREDIT = 40L
 }

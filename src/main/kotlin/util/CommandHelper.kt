@@ -8,11 +8,12 @@ import data.RatingRepository
 object CommandHelper {
 
     fun CommandHandlerEnvironment.sendStickerSet(message: Message) {
-        bot.sendMessage(
+        bot.sendSticker(
             chatId = ChatId.fromId(message.chat.id),
-            text = "Sticker set link:\nhttps://t.me/addstickers/PoohSocialCredit",
+            sticker = Stickers.STICKER_SET_FILE_ID,
             replyToMessageId = message.messageId,
-            disableNotification = true
+            disableNotification = true,
+            replyMarkup = null
         )
     }
 

@@ -3,27 +3,29 @@ import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
+import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import data.RatingRepositoryImpl
-import util.ChatTypes
+import util.*
 import util.CommandHelper.sendNotGroupMessage
 import util.CommandHelper.sendStickerSet
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
-import util.Constants
+import util.Constants.MESSAGE_LONG_LIVE_THE_KING
+import util.Constants.MESSAGE_WOMEN
 import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
 import util.MessageHelper.sendNotGroupMessage
 import util.MessageHelper.sendUpdateUserSocialCreditResultMessage
-import util.PropertiesHelper
 import util.Stickers.getSocialCreditChange
+import java.util.*
 
 fun main(args: Array<String>) {
     val propertiesHelper = PropertiesHelper(propertiesFilePath = args[0])
     val ratingRepository: RatingRepository = RatingRepositoryImpl(dbPath = propertiesHelper.getDbPath())
 
-    val bot = bot {
+    val telegramBot = bot {
         token = propertiesHelper.getBotToken()
 
         dispatch {
@@ -75,6 +77,33 @@ fun main(args: Array<String>) {
             }
 
             message {
+                val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
+                val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
+                val shouldSendLongLiveTheKingResponse = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
+                if (shouldSendLongLiveTheKingResponse) {
+                    bot.sendSticker(
+                        chatId = ChatId.fromId(message.chat.id),
+                        sticker = Stickers.HOLY_KING_FILE_ID,
+                        replyToMessageId = message.messageId,
+                        disableNotification = true,
+                        replyMarkup = null
+                    )
+                    return@message
+                }
+
+                val messageContainsWomen = message.text?.lowercase(Locale.US) == MESSAGE_WOMEN
+                val captionContainsWomen = message.caption?.lowercase(Locale.US) == MESSAGE_WOMEN
+                val shouldSendWomenResponse = messageContainsWomen || captionContainsWomen
+                if (shouldSendWomenResponse) {
+                    bot.sendAnimation(
+                        chatId = ChatId.fromId(message.chat.id),
+                        animation = TelegramFile.ByFileId(Gifs.WOMEN_FILE_ID),
+                        replyToMessageId = message.messageId,
+                        disableNotification = true
+                    )
+                    return@message
+                }
+
                 if (message.sticker == null || message.replyToMessage?.from == null) {
                     return@message
                 }
@@ -126,5 +155,6 @@ fun main(args: Array<String>) {
             }
         }
     }
-    bot.startPolling()
+
+    telegramBot.startPolling()
 }

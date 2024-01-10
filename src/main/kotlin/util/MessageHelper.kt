@@ -3,6 +3,7 @@ package util
 import com.github.kotlintelegrambot.dispatcher.handlers.MessageHandlerEnvironment
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
+import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import kotlin.math.absoluteValue
 
@@ -53,9 +54,9 @@ object MessageHelper {
     }
 
     private fun MessageHandlerEnvironment.sendMemberPermissionMessage(message: Message) {
-        bot.sendMessage(
+        bot.sendAnimation(
             chatId = ChatId.fromId(message.chat.id),
-            text = "کاکا سیاه نادان به مزرعه پنبه برگرد",
+            animation = TelegramFile.ByFileId(Gifs.COTTON_FARM_FILE_ID),
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -131,6 +132,22 @@ object MessageHelper {
                             text = messageBuilder.toString(),
                             disableNotification = true
                         )
+
+                        if (sendToUyghurCampText != null) {
+                            bot.sendAnimation(
+                                chatId = ChatId.fromId(message.chat.id),
+                                animation = TelegramFile.ByFileId(Gifs.POOH_AND_CJ_FILE_ID),
+                                disableNotification = true
+                            )
+                        }
+
+                        if (userRatingInfo.rating >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
+                            bot.sendAnimation(
+                                chatId = ChatId.fromId(message.chat.id),
+                                animation = TelegramFile.ByFileId(Gifs.POOH_DANCING_FILE_ID),
+                                disableNotification = true
+                            )
+                        }
                     }
 
                     updateUserRatingResult.onFailure {
