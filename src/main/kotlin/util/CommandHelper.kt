@@ -88,7 +88,7 @@ object CommandHelper {
         ratingRepository: RatingRepository
     ) {
         val groupSocialCreditsList = ratingRepository
-            .getGroupSocialCreditsList(message.chat.id)
+            .getGroupSocialCreditsList(groupId = message.chat.id)
             .associate { userSocialCreditsInfo ->
                 userSocialCreditsInfo.firstName to userSocialCreditsInfo.socialCredits
             }
@@ -100,14 +100,18 @@ object CommandHelper {
             append("\n\n")
         }
 
-        groupSocialCreditsList.forEach { (firstName, socialCredits) ->
-            stringBuilder.apply {
-                when {
-                    socialCredits > 0 -> append("\uD83D\uDC4D\uD83C\uDFFBThe party is proud of comrade $firstName with $socialCredits social credits.")
-                    socialCredits == 0L -> append("Comrade $firstName has 0 social credits.")
-                    else -> append("\uD83D\uDC4E\uD83C\uDFFBWow! Comrade $firstName, you have disappointed the party with your $socialCredits social credits.")
+        if (groupSocialCreditsList.isEmpty()) {
+            stringBuilder.append("Every comrade has 0 social credits. Great Leader Xi is watching over you!")
+        } else {
+            groupSocialCreditsList.forEach { (firstName, socialCredits) ->
+                stringBuilder.apply {
+                    when {
+                        socialCredits > 0 -> append("\uD83D\uDC4D\uD83C\uDFFBThe party is proud of comrade $firstName with $socialCredits social credits.")
+                        socialCredits == 0L -> append("Comrade $firstName has 0 social credits.")
+                        else -> append("\uD83D\uDC4E\uD83C\uDFFBWow! Comrade $firstName, you have disappointed the party with your $socialCredits social credits.")
+                    }
+                    append("\n")
                 }
-                append("\n")
             }
         }
 
