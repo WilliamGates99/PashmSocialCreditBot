@@ -15,16 +15,16 @@ object Jobs {
     )
 
     fun sendToUyghurCampIfNeeded(
-        previousSocialCredit: Long,
-        currentSocialCredit: Long,
+        previousSocialCredits: Long,
+        currentSocialCredits: Long,
         user: User
     ): String? {
         return when {
-            previousSocialCredit >= 0L && currentSocialCredit < 0L -> {
+            previousSocialCredits >= 0L && currentSocialCredits < 0L -> {
                 val job = uyghurCampJobs.random()
                 "\uD83C\uDF34The party has decided to send Comrade ${user.firstName} to a Uyghur camp where he will be $job. The Party is taking care of the bad citizens.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"
             }
-            previousSocialCredit < 0L && currentSocialCredit >= 0L -> {
+            previousSocialCredits < 0L && currentSocialCredits >= 0L -> {
                 "\uD83C\uDFE1The party has decided to return comrade ${user.firstName} from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"
             }
             else -> null

@@ -1,6 +1,6 @@
 package domain.model
 
-data class UserRatingInfo(
+data class UserSocialCreditsInfo(
     val groupId: Long,
     val groupTitle: String,
     val userId: Long,

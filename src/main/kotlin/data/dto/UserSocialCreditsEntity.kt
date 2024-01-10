@@ -1,11 +1,11 @@
 package data.dto
 
-import domain.model.UserRatingInfo
+import domain.model.UserSocialCreditsInfo
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class UserSocialCreditEntity(id: EntityID<Long>) : LongEntity(id) {
+class UserSocialCreditsEntity(id: EntityID<Long>) : LongEntity(id) {
     var groupId by UsersSocialCreditsTable.groupId
     var groupTitle by UsersSocialCreditsTable.groupTitle
     var userId by UsersSocialCreditsTable.userId
@@ -15,10 +15,10 @@ class UserSocialCreditEntity(id: EntityID<Long>) : LongEntity(id) {
     var createdAt by UsersSocialCreditsTable.createdAt
     var modifiedAt by UsersSocialCreditsTable.modifiedAt
 
-    companion object : LongEntityClass<UserSocialCreditEntity>(UsersSocialCreditsTable)
+    companion object : LongEntityClass<UserSocialCreditsEntity>(UsersSocialCreditsTable)
 
-    fun toUserRatingInfo(): UserRatingInfo {
-        return UserRatingInfo(
+    fun toUserSocialCreditsInfo(): UserSocialCreditsInfo {
+        return UserSocialCreditsInfo(
             groupId = groupId,
             groupTitle = groupTitle,
             userId = userId,
