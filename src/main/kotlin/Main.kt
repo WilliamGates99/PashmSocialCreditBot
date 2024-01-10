@@ -3,21 +3,24 @@ import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
 import com.github.kotlintelegrambot.entities.ChatId
-import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import data.RatingRepositoryImpl
-import util.*
+import util.ChatTypes
 import util.CommandHelper.sendNotGroupMessage
 import util.CommandHelper.sendStickerSet
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
+import util.Constants
 import util.Constants.MESSAGE_LONG_LIVE_THE_KING
 import util.Constants.MESSAGE_WOMEN
 import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
+import util.MessageHelper.sendLongLiveTheKingSticker
 import util.MessageHelper.sendNotGroupMessage
 import util.MessageHelper.sendUpdateUserSocialCreditResultMessage
+import util.MessageHelper.sendWomenGif
+import util.PropertiesHelper
 import util.Stickers.getSocialCreditChange
 import java.util.*
 
@@ -79,28 +82,17 @@ fun main(args: Array<String>) {
             message {
                 val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
                 val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US) == MESSAGE_LONG_LIVE_THE_KING
-                val shouldSendLongLiveTheKingResponse = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
-                if (shouldSendLongLiveTheKingResponse) {
-                    bot.sendSticker(
-                        chatId = ChatId.fromId(message.chat.id),
-                        sticker = Stickers.HOLY_KING_FILE_ID,
-                        replyToMessageId = message.messageId,
-                        disableNotification = true,
-                        replyMarkup = null
-                    )
+                val shouldSendLongLiveTheKingSticker = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
+                if (shouldSendLongLiveTheKingSticker) {
+                    sendLongLiveTheKingSticker(message)
                     return@message
                 }
 
                 val messageContainsWomen = message.text?.lowercase(Locale.US) == MESSAGE_WOMEN
                 val captionContainsWomen = message.caption?.lowercase(Locale.US) == MESSAGE_WOMEN
-                val shouldSendWomenResponse = messageContainsWomen || captionContainsWomen
-                if (shouldSendWomenResponse) {
-                    bot.sendAnimation(
-                        chatId = ChatId.fromId(message.chat.id),
-                        animation = TelegramFile.ByFileId(Gifs.WOMEN_FILE_ID),
-                        replyToMessageId = message.messageId,
-                        disableNotification = true
-                    )
+                val shouldSendWomenGif = messageContainsWomen || captionContainsWomen
+                if (shouldSendWomenGif) {
+                    sendWomenGif(message)
                     return@message
                 }
 
@@ -111,9 +103,9 @@ fun main(args: Array<String>) {
                 val isUserReplyingThemself = message.from?.id == message.replyToMessage?.from?.id
                 if (isUserReplyingThemself) {
                     when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendCreditingYourselfProhibitionMessage(
-                            message
-                        )
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
+                            sendCreditingYourselfProhibitionMessage(message)
+                        }
                         ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
                     }
                     return@message
@@ -123,9 +115,9 @@ fun main(args: Array<String>) {
                 val isUserReplyingSocialCreditBot = message.replyToMessage?.from?.username == botUser.username
                 if (isUserReplyingSocialCreditBot) {
                     when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendCreditingSocialCreditBotProhibitionMessage(
-                            message
-                        )
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
+                            sendCreditingSocialCreditBotProhibitionMessage(message)
+                        }
                         ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
                     }
                     return@message

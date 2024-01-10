@@ -20,7 +20,7 @@ object CommandHelper {
     fun CommandHandlerEnvironment.sendNotGroupMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "Du-uh, The Social Credit System only works in groups.",
+            text = "\uD83D\uDE44The Social Credit System only works in groups.",
             disableNotification = true
         )
     }
@@ -34,7 +34,7 @@ object CommandHelper {
                 groupId = message.chat.id,
                 userId = user.id
             )
-            val userSocialCredit = userRatingInfo?.rating ?: 0L
+            val userSocialCredit = userRatingInfo?.socialCredits ?: 0L
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
@@ -52,7 +52,7 @@ object CommandHelper {
         if (repliedUser == null) {
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),
-                text = "⚠\uFE0F Reply to someone with /credits to find out their social credits!",
+                text = "⚠\uFE0FReply to someone with /credits to find out their social credits!",
                 replyToMessageId = message.messageId,
                 disableNotification = true
             )
@@ -62,7 +62,7 @@ object CommandHelper {
             if (isUserReplyingThemself) {
                 bot.sendMessage(
                     chatId = ChatId.fromId(message.chat.id),
-                    text = "⚠\uFE0F Use /mycredits command to find out your social credits!",
+                    text = "⚠\uFE0FUse /mycredits command to find out your social credits!",
                     replyToMessageId = message.messageId,
                     disableNotification = true
                 )
@@ -73,7 +73,7 @@ object CommandHelper {
                 groupId = message.chat.id,
                 userId = repliedUser.id
             )
-            val userSocialCredit = userRatingInfo?.rating ?: 0L
+            val userSocialCredit = userRatingInfo?.socialCredits ?: 0L
 
             bot.sendMessage(
                 chatId = ChatId.fromId(message.chat.id),

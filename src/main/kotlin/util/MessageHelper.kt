@@ -9,10 +9,29 @@ import kotlin.math.absoluteValue
 
 object MessageHelper {
 
+    fun MessageHandlerEnvironment.sendLongLiveTheKingSticker(message:Message){
+        bot.sendSticker(
+            chatId = ChatId.fromId(message.chat.id),
+            sticker = Stickers.HOLY_KING_FILE_ID,
+            replyToMessageId = message.messageId,
+            disableNotification = true,
+            replyMarkup = null
+        )
+    }
+
+    fun MessageHandlerEnvironment.sendWomenGif(message: Message){
+        bot.sendAnimation(
+            chatId = ChatId.fromId(message.chat.id),
+            animation = TelegramFile.ByFileId(Gifs.WOMEN_FILE_ID),
+            replyToMessageId = message.messageId,
+            disableNotification = true
+        )
+    }
+
     fun MessageHandlerEnvironment.sendNotGroupMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "Du-uh, The Social Credit System only works in groups.",
+            text = "\uD83D\uDE44The Social Credit System only works in groups.",
             disableNotification = true
         )
     }
@@ -38,7 +57,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting other robots. Great Leader Xi is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting bots. Great Leader Xi is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true
         )
@@ -114,10 +133,10 @@ object MessageHelper {
 
                             when {
                                 userRatingInfo.socialCredits > 100 -> {
-                                    append("The party is proud of you comrade\uD83E\uDEE1")
+                                    append("\uD83E\uDEE1The party is proud of you comrade.")
                                 }
                                 userRatingInfo.socialCredits < 0 -> {
-                                    append("You're disappointing the party comrade\uD83D\uDE1E")
+                                    append("\uD83D\uDE1EYou're disappointing the party comrade.")
                                 }
                             }
 
