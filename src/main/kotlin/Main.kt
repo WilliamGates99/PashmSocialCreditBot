@@ -52,7 +52,7 @@ fun main(args: Array<String>) {
                 val ratings = ratingRepository
                     .getRatingsList()
                     .associate { info ->
-                        info.username to info.rating
+                        info.username to info.socialCredits
                     }
 
                 val stringBuilder = StringBuilder().apply {
@@ -142,11 +142,11 @@ fun main(args: Array<String>) {
 
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                        val socialCreditChange = message.getSocialCreditChange() ?: return@message
+                        val socialCreditsChange = message.getSocialCreditChange() ?: return@message
 
                         sendUpdateUserSocialCreditResultMessage(
                             message = message,
-                            socialCreditChange = socialCreditChange,
+                            socialCreditsChange = socialCreditsChange,
                             ratingRepository = ratingRepository
                         )
                     }

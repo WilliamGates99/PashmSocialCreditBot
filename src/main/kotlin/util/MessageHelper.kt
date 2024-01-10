@@ -64,7 +64,7 @@ object MessageHelper {
 
     fun MessageHandlerEnvironment.sendUpdateUserSocialCreditResultMessage(
         message: Message,
-        socialCreditChange: Long,
+        socialCreditsChange: Long,
         ratingRepository: RatingRepository
     ) {
         message.replyToMessage?.from?.let { targetUser ->
@@ -81,7 +81,7 @@ object MessageHelper {
 
             when (chatMember?.status) {
                 Constants.CHAT_MEMBER_STATUS_CREATOR, Constants.CHAT_MEMBER_STATUS_ADMIN -> {
-                    val previousCredit = ratingRepository.getUserRating(groupId, userId)?.rating ?: 0L
+                    val previousCredit = ratingRepository.getUserRating(groupId, userId)?.socialCredits ?: 0L
                     val updateUserRatingResult = ratingRepository.updateUserRating(
                         messageSenderId = messageSender.id,
                         groupId = groupId,
@@ -89,19 +89,19 @@ object MessageHelper {
                         userId = userId,
                         username = username ?: "-",
                         firstName = firstName,
-                        ratingChange = socialCreditChange
+                        socialCreditsChange = socialCreditsChange
                     )
 
-                    val socialCreditChangeText = if (socialCreditChange > 0) {
-                        "Plus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}."
+                    val socialCreditChangeText = if (socialCreditsChange > 0) {
+                        "Plus ${socialCreditsChange.absoluteValue} social credits for ${targetUser.firstName}."
                     } else {
-                        "Minus ${socialCreditChange.absoluteValue} social credits for ${targetUser.firstName}."
+                        "Minus ${socialCreditsChange.absoluteValue} social credits for ${targetUser.firstName}."
                     }
 
                     updateUserRatingResult.onSuccess { userRatingInfo ->
                         val sendToUyghurCampText = Jobs.sendToUyghurCampIfNeeded(
                             previousSocialCredit = previousCredit,
-                            currentSocialCredit = userRatingInfo.rating,
+                            currentSocialCredit = userRatingInfo.socialCredits,
                             user = targetUser
                         )
 
@@ -109,14 +109,14 @@ object MessageHelper {
                             append(socialCreditChangeText)
                             append("\n")
                             append("Current Social Credits: ")
-                            append(userRatingInfo.rating)
+                            append(userRatingInfo.socialCredits)
                             append("\n\n")
 
                             when {
-                                userRatingInfo.rating > 100 -> {
+                                userRatingInfo.socialCredits > 100 -> {
                                     append("The party is proud of you comrade\uD83E\uDEE1")
                                 }
-                                userRatingInfo.rating < 0 -> {
+                                userRatingInfo.socialCredits < 0 -> {
                                     append("You're disappointing the party comrade\uD83D\uDE1E")
                                 }
                             }
@@ -141,7 +141,7 @@ object MessageHelper {
                             )
                         }
 
-                        if (userRatingInfo.rating >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
+                        if (userRatingInfo.socialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
                             bot.sendAnimation(
                                 chatId = ChatId.fromId(message.chat.id),
                                 animation = TelegramFile.ByFileId(Gifs.POOH_DANCING_FILE_ID),

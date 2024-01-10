@@ -7,7 +7,8 @@ import org.jetbrains.exposed.dao.id.EntityID
 
 class UserRatingsHistoryEntity(id: EntityID<Long>) : LongEntity(id) {
     var groupId by UserRatingsHistoryTable.groupId
-    var userId by UserRatingsHistoryTable.userId
+    var raterUserId by UserRatingsHistoryTable.raterUserId
+    var targetUserId by UserRatingsHistoryTable.targetUserId
     var createdAt by UserRatingsHistoryTable.createdAt
     var modifiedAt by UserRatingsHistoryTable.modifiedAt
 
@@ -16,7 +17,8 @@ class UserRatingsHistoryEntity(id: EntityID<Long>) : LongEntity(id) {
     fun toUserRatingsHistory(): UserRatingsHistory {
         return UserRatingsHistory(
             groupId = groupId,
-            userId = userId,
+            raterUserId = raterUserId,
+            targetUserId = targetUserId,
             createdAt = createdAt,
             modifiedAt = modifiedAt
         )

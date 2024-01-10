@@ -6,7 +6,7 @@ data class UserRatingInfo(
     val userId: Long,
     val username: String,
     val firstName: String,
-    val rating: Long,
+    val socialCredits: Long,
     val createdAt: Long,
     val modifiedAt: Long
 )

@@ -18,6 +18,6 @@ interface RatingRepository {
         userId: Long,
         username: String,
         firstName: String,
-        ratingChange: Long
+        socialCreditsChange: Long
     ): Result<UserRatingInfo>
 }
