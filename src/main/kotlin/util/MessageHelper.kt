@@ -14,7 +14,6 @@ object MessageHelper {
         bot.sendSticker(
             chatId = ChatId.fromId(message.chat.id),
             sticker = Stickers.STICKER_SET_FILE_ID,
-            replyToMessageId = message.messageId,
             disableNotification = true,
             replyMarkup = null
         )
@@ -183,7 +182,7 @@ object MessageHelper {
                         if (currentSocialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
                             bot.sendAnimation(
                                 chatId = ChatId.fromId(message.chat.id),
-                                animation = TelegramFile.ByFileId(Gifs.POOH_DANCING_FILE_ID),
+                                animation = TelegramFile.ByFileId(Gifs.JOHN_XINA_FILE_ID),
                                 disableNotification = true
                             )
                         }
