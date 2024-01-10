@@ -22,7 +22,7 @@ object Jobs {
         return when {
             previousSocialCredits >= 0L && currentSocialCredits < 0L -> {
                 val job = uyghurCampJobs.random()
-                "\uD83C\uDF34The party has decided to send Comrade ${user.firstName} to a Uyghur camp where he will be $job. The Party is taking care of the bad citizens.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"
+                "\uD83C\uDF34The party has decided to send Comrade ${user.firstName} to a Uyghur camp where he will be $job. The Party is taking care of the bad comrades.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"
             }
             previousSocialCredits < 0L && currentSocialCredits >= 0L -> {
                 "\uD83C\uDFE1The party has decided to return comrade ${user.firstName} from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F"

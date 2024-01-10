@@ -4,7 +4,7 @@ import com.github.kotlintelegrambot.entities.Message
 
 object Stickers {
 
-    internal const val STICKER_SET_FILE_ID = "" // TODO: UPDATE
+    internal const val STICKER_SET_FILE_ID = "CAACAgEAAx0CRMHEJQABCEx7ZZ7DErK2TT7oM0591IB28aP9zHYAAgIAA39wRhwFzGTYNyIryDQE"
     internal const val HOLY_KING_FILE_ID = "CAACAgQAAxkBAANXZZ6cnGV-Hn7TzIJV4O9s8673hxYAAtoBAALeqGIKh9ilW8uGq9U0BA"
 
     private val plusSocialCreditStickers = arrayOf(
