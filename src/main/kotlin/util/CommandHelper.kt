@@ -52,6 +52,11 @@ object CommandHelper {
             )
             return
         } else {
+            val isReplyingToBot = repliedUser.isBot
+            if (isReplyingToBot) {
+                return
+            }
+
             val isUserReplyingThemself = message.from?.id == repliedUser.id
             if (isUserReplyingThemself) {
                 bot.sendMessage(
