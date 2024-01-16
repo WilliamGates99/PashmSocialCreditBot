@@ -15,7 +15,12 @@ object Constants {
 
     internal const val MESSAGE_GET_STICKER_SET = "?"
     internal const val MESSAGE_LONG_LIVE_THE_KING = "long live the king"
-    internal const val MESSAGE_WOMEN = "women☕\uFE0F"
+    internal const val MESSAGE_KING_MASOUD = "king masoud"
+    internal const val MESSAGE_BIG_MASOUD = "big masoud"
+    internal const val MESSAGE_MASOUD = "masoud"
+    internal const val MESSAGE_WOMEN_COFFEE = "women☕\uFE0F"
+    internal const val MESSAGE_WOMEN = "women"
+    internal const val MESSAGE_COFFEE = "women☕\uFE0F"
 
     internal const val RATING_COOL_DOWN_IN_MINUTES = 5
     internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes

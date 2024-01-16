@@ -10,9 +10,14 @@ import util.CommandHelper.showGroupSocialCreditsList
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
 import util.Constants
+import util.Constants.MESSAGE_BIG_MASOUD
+import util.Constants.MESSAGE_COFFEE
 import util.Constants.MESSAGE_GET_STICKER_SET
+import util.Constants.MESSAGE_KING_MASOUD
 import util.Constants.MESSAGE_LONG_LIVE_THE_KING
+import util.Constants.MESSAGE_MASOUD
 import util.Constants.MESSAGE_WOMEN
+import util.Constants.MESSAGE_WOMEN_COFFEE
 import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
@@ -66,11 +71,17 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                val messageContainsLongLiveTheKing = message.text?.lowercase(Locale.US)
-                    ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true
-                val captionContainsLongLiveTheKing = message.caption?.lowercase(Locale.US)
-                    ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true
-                val shouldSendLongLiveTheKingSticker = messageContainsLongLiveTheKing || captionContainsLongLiveTheKing
+                val shouldSendLongLiveTheKingSticker = when {
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
+                    else -> false
+                }
                 if (shouldSendLongLiveTheKingSticker) {
                     when (message.chat.type) {
                         ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendLongLiveTheKingSticker(message)
@@ -79,9 +90,15 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                val messageContainsWomen = message.text?.lowercase(Locale.US) == MESSAGE_WOMEN
-                val captionContainsWomen = message.caption?.lowercase(Locale.US) == MESSAGE_WOMEN
-                val shouldSendWomenGif = messageContainsWomen || captionContainsWomen
+                val shouldSendWomenGif = when {
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_COFFEE) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_COFFEE) == true -> true
+                    else -> false
+                }
                 if (shouldSendWomenGif) {
                     when (message.chat.type) {
                         ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendWomenGif(message)
