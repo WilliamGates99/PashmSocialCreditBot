@@ -26,6 +26,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
             UserSocialCreditsEntity
                 .find { UsersSocialCreditsTable.groupId eq groupId }
                 .orderBy(Pair(UsersSocialCreditsTable.socialCredits, SortOrder.DESC))
+                .orderBy(Pair(UsersSocialCreditsTable.firstName, SortOrder.ASC))
                 .limit(Constants.GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT)
                 .map { it.toUserSocialCreditsInfo() }
         }
