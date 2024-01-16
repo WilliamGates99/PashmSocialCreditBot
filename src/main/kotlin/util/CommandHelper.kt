@@ -52,6 +52,11 @@ object CommandHelper {
             )
             return
         } else {
+            val isReplyingToBot = repliedUser.isBot
+            if (isReplyingToBot) {
+                return
+            }
+
             val isUserReplyingThemself = message.from?.id == repliedUser.id
             if (isUserReplyingThemself) {
                 bot.sendMessage(
@@ -90,11 +95,11 @@ object CommandHelper {
             stringBuilder.append("Every comrade has 0 social credits. Be careful, *great Leader Xi* is watching over you!")
         } else {
             stringBuilder.apply {
-                append("_\uD83D\uDCE3Comrades, listen carefully!_")
+                append("<i>\uD83D\uDCE3Comrades, listen carefully!</i>")
                 append("\n")
-                append("_\uD83D\uDCDCIn the name of our *great leader Xi*, the party has published a list of the top comrades based on their social credits:_")
+                append("<i>\uD83D\uDCDCIn the name of our <b>great leader Xi</b>, the party has published top citizens list based on their social credits:</i>")
                 append("\n\n")
-                append("||") // Spoiler Markdown
+                append("<tg-spoiler>") // Spoiler Markdown Tag
             }
 
             groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
@@ -103,18 +108,21 @@ object CommandHelper {
                         val socialClass = SocialClass.getComradeSocialClass(socialCredits)
                         append("${index + 1}. $firstName ― $socialClass: $socialCredits credits")
                     }
-                    append("\n")
+
+                    if (index == groupSocialCreditsList.lastIndex) {
+                        append("</tg-spoiler>") // Spoiler Markdown Tag
+                    } else {
+                        append("\n")
+                    }
                 }
             }
-
-            stringBuilder.append("||") // Spoiler Markdown
         }
 
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
             text = stringBuilder.toString(),
             disableNotification = true,
-            parseMode = ParseMode.MARKDOWN
+            parseMode = ParseMode.HTML
         )
     }
 }
