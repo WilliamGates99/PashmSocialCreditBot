@@ -90,18 +90,24 @@ object CommandHelper {
             stringBuilder.append("Every comrade has 0 social credits. Be careful, *great Leader Xi* is watching over you!")
         } else {
             stringBuilder.apply {
-                append("\uD83D\uDCE3Comrades, listen carefully!")
+                append("_\uD83D\uDCE3Comrades, listen carefully!_")
                 append("\n")
-                append("\uD83D\uDCDCIn the name of our *great leader Xi*, the party has published a list of the top comrades based on their social credits:")
+                append("_\uD83D\uDCDCIn the name of our *great leader Xi*, the party has published a list of the top comrades based on their social credits:_")
                 append("\n\n")
+                append("||") // Spoiler Markdown
             }
 
             groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
                 stringBuilder.apply {
-                    userSocialCreditsInfo.apply { append("${index + 1}. $firstName with $socialCredits credits") }
+                    userSocialCreditsInfo.apply {
+                        val socialClass = SocialClass.getComradeSocialClass(socialCredits)
+                        append("${index + 1}. $firstName ― $socialClass: $socialCredits credits")
+                    }
                     append("\n")
                 }
             }
+
+            stringBuilder.append("||") // Spoiler Markdown
         }
 
         bot.sendMessage(

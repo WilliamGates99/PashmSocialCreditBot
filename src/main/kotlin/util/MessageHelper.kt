@@ -96,6 +96,16 @@ object MessageHelper {
         )
     }
 
+    fun MessageHandlerEnvironment.sendZeroChangeTrollMessage(message: Message) {
+        bot.sendMessage(
+            chatId = ChatId.fromId(message.chat.id),
+            text = "±0 social credits does nothing, you fucking *RETARD*.",
+            replyToMessageId = message.messageId,
+            disableNotification = true,
+            parseMode = ParseMode.MARKDOWN
+        )
+    }
+
     fun MessageHandlerEnvironment.sendUpdateUserSocialCreditResultMessage(
         message: Message,
         socialCreditsChange: Long,

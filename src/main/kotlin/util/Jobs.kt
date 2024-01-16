@@ -9,6 +9,8 @@ object Jobs {
         "making Uniqlo T-shirt",
         "assembling Mercedes-Benz CLA",
         "lubricating DSG clutches for VAG",
-        "assembling iPhone"
+        "assembling iPhones",
+        "assembling iPads",
+        "assembling MacBooks"
     )
 }
