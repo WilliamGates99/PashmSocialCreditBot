@@ -20,7 +20,7 @@ object Constants {
     internal const val RATING_COOL_DOWN_IN_MINUTES = 5
     internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
     internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 10
-    internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 100L
+    internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 250L
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
 
     internal const val PLUS_100_CREDIT = 100L
@@ -30,4 +30,9 @@ object Constants {
     internal const val MINUS_20_CREDIT = -20L
     internal const val MINUS_50_CREDIT = -50L
     internal const val MINUS_100_CREDIT = -100L
+
+    internal const val SOCIAL_CLASS_CREDIT_POSITIVE_1000 = 1000L
+    internal const val SOCIAL_CLASS_CREDIT_POSITIVE250 = 250L
+    internal const val SOCIAL_CLASS_CREDIT_NEGATIVE_250 = -250L
+    internal const val SOCIAL_CLASS_CREDIT_NEGATIVE_1000 = -1000L
 }
