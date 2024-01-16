@@ -128,6 +128,16 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
+                /* TODO: CHANGE
+                if (socialCreditsChange == 0L) {
+                    when (message.chat.type) {
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendCreditingBotProhibitionMessage(message)
+                        ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                    }
+                    return@message
+                }
+                 */
+
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
                         sendUpdateUserSocialCreditResultMessage(

@@ -23,7 +23,11 @@ object Constants {
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 100L
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
 
-    internal const val DEFAULT_PLUS_CREDIT = 20L
-    internal const val DEFAULT_MINUS_CREDIT = -20L
-    internal const val DEFAULT_PLUS_RICE_PLATE_CREDIT = 40L
+    internal const val PLUS_100_CREDIT = 100L
+    internal const val PLUS_50_CREDIT = 50L
+    internal const val PLUS_20_CREDIT = 20L
+    internal const val ZERO_CHANGE_CREDIT = 0L
+    internal const val MINUS_20_CREDIT = -20L
+    internal const val MINUS_50_CREDIT = -50L
+    internal const val MINUS_100_CREDIT = -100L
 }
