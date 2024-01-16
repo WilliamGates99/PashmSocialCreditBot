@@ -26,6 +26,7 @@ import util.MessageHelper.sendNotGroupMessage
 import util.MessageHelper.sendStickerSet
 import util.MessageHelper.sendUpdateUserSocialCreditResultMessage
 import util.MessageHelper.sendWomenGif
+import util.MessageHelper.sendZeroChangeTrollMessage
 import util.PropertiesHelper
 import util.Stickers.getSocialCreditChange
 import java.util.*
@@ -145,15 +146,13 @@ fun main(args: Array<String>) {
                     return@message
                 }
 
-                /* TODO: CHANGE
                 if (socialCreditsChange == 0L) {
                     when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendCreditingBotProhibitionMessage(message)
+                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendZeroChangeTrollMessage(message)
                         ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
                     }
                     return@message
                 }
-                 */
 
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
