@@ -9,6 +9,8 @@ object Constants {
     internal const val CHAT_MEMBER_STATUS_ADMIN = "administrator"
     internal const val CHAT_MEMBER_STATUS_MEMBER = "member"
 
+    internal const val COMMAND_SEND_TEXT_ART_XI_JINPING = "xi"
+    internal const val COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH = "pooh"
     internal const val COMMAND_SHOW_COMRADES_RANK = "comradesrank"
     internal const val COMMAND_SHOW_MY_CREDITS = "mycredits"
     internal const val COMMAND_SHOW_OTHERS_CREDITS = "credits"
@@ -20,10 +22,10 @@ object Constants {
     internal const val MESSAGE_MASOUD = "masoud"
     internal const val MESSAGE_WOMEN_COFFEE = "women☕\uFE0F"
     internal const val MESSAGE_WOMEN = "women"
-    internal const val MESSAGE_COFFEE = "women☕\uFE0F"
+    internal const val MESSAGE_WOMEN_BRAIN = "عقل زن"
 
-    internal const val RATING_COOL_DOWN_IN_MINUTES = 5
-    internal const val RATING_COOL_DOWN_IN_MILLIS = 5 * 60 * 1000L // 5 Minutes
+    internal const val RATING_COOL_DOWN_IN_MINUTES = 30
+    internal const val RATING_COOL_DOWN_IN_MILLIS = 30 * 60 * 1000L // 30 Minutes
     internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 10
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 250L
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
