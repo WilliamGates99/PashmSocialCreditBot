@@ -6,17 +6,19 @@ import data.RatingRepository
 import data.RatingRepositoryImpl
 import util.ChatTypes
 import util.CommandHelper.sendNotGroupMessage
+import util.CommandHelper.sendWinnieThePoohTextArt
+import util.CommandHelper.sendXiJinpingTextArt
 import util.CommandHelper.showGroupSocialCreditsList
 import util.CommandHelper.showMyCredits
 import util.CommandHelper.showOthersCredits
 import util.Constants
 import util.Constants.MESSAGE_BIG_MASOUD
-import util.Constants.MESSAGE_COFFEE
 import util.Constants.MESSAGE_GET_STICKER_SET
 import util.Constants.MESSAGE_KING_MASOUD
 import util.Constants.MESSAGE_LONG_LIVE_THE_KING
 import util.Constants.MESSAGE_MASOUD
 import util.Constants.MESSAGE_WOMEN
+import util.Constants.MESSAGE_WOMEN_BRAIN
 import util.Constants.MESSAGE_WOMEN_COFFEE
 import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
@@ -39,6 +41,14 @@ fun main(args: Array<String>) {
         token = propertiesHelper.getBotToken()
 
         dispatch {
+            command(Constants.COMMAND_SEND_TEXT_ART_XI_JINPING) {
+                sendXiJinpingTextArt(message)
+            }
+
+            command(Constants.COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH) {
+                sendWinnieThePoohTextArt(message)
+            }
+
             command(Constants.COMMAND_SHOW_MY_CREDITS) {
                 when (message.chat.type) {
                     ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> showMyCredits(message, ratingRepository)
@@ -94,10 +104,10 @@ fun main(args: Array<String>) {
                 val shouldSendWomenGif = when {
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_COFFEE) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_COFFEE) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
                     else -> false
                 }
                 if (shouldSendWomenGif) {
