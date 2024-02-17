@@ -22,6 +22,7 @@ object Stickers {
     )
 
     private val zeroChangeSocialCreditStickers = arrayOf(
+        "AgADEQ8AAup9iVI",
         "AgAD7xQAAlxpOVE"
     )
 
