@@ -11,6 +11,7 @@ object Jobs {
         "lubricating DSG clutches for VAG",
         "assembling iPhones",
         "assembling iPads",
-        "assembling MacBooks"
+        "assembling MacBooks",
+        "washing party members' feet"
     )
 }
