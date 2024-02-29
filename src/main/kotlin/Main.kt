@@ -102,10 +102,12 @@ fun main(args: Array<String>) {
                 }
 
                 val shouldSendWomenGif = when {
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE2) == true -> true
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
                     else -> false

@@ -20,7 +20,8 @@ object Constants {
     internal const val MESSAGE_KING_MASOUD = "king masoud"
     internal const val MESSAGE_BIG_MASOUD = "big masoud"
     internal const val MESSAGE_MASOUD = "masoud"
-    internal const val MESSAGE_WOMEN_COFFEE = "women☕\uFE0F"
+    internal const val MESSAGE_WOMEN_COFFEE_1 = "women☕\uFE0F"
+    internal const val MESSAGE_WOMEN_COFFEE_2 = "women ☕\uFE0F"
     internal const val MESSAGE_WOMEN = "women"
     internal const val MESSAGE_WOMEN_BRAIN = "عقل زن"
 
