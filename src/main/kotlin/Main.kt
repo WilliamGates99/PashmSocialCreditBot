@@ -19,7 +19,8 @@ import util.Constants.MESSAGE_LONG_LIVE_THE_KING
 import util.Constants.MESSAGE_MASOUD
 import util.Constants.MESSAGE_WOMEN
 import util.Constants.MESSAGE_WOMEN_BRAIN
-import util.Constants.MESSAGE_WOMEN_COFFEE
+import util.Constants.MESSAGE_WOMEN_COFFEE_1
+import util.Constants.MESSAGE_WOMEN_COFFEE_2
 import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
@@ -102,10 +103,12 @@ fun main(args: Array<String>) {
                 }
 
                 val shouldSendWomenGif = when {
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
                     message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
                     message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
                     else -> false

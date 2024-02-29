@@ -8,6 +8,7 @@ import com.github.kotlintelegrambot.entities.TelegramFile
 import data.RatingRepository
 import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import util.Constants.RATING_COOL_DOWN_IN_MINUTES
+import util.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
 
 object MessageHelper {
 
@@ -60,7 +61,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingSocialCreditBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of a great party! *Great Leader Xi* is watching over you!",
+            text = "\uD83D\uDEABAn ordinary comrade can't change the credits of the great party! *Great Leader Xi* is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true,
             parseMode = ParseMode.MARKDOWN
@@ -70,7 +71,7 @@ object MessageHelper {
     fun MessageHandlerEnvironment.sendCreditingBotProhibitionMessage(message: Message) {
         bot.sendMessage(
             chatId = ChatId.fromId(message.chat.id),
-            text = "\uD83D\uDEABThe party prohibits crediting bots. *Great Leader Xi* is watching over you!",
+            text = "\uD83D\uDEABThe party prohibits crediting other bots. *Great Leader Xi* is watching over you!",
             replyToMessageId = message.messageId,
             disableNotification = true,
             parseMode = ParseMode.MARKDOWN
@@ -150,6 +151,11 @@ object MessageHelper {
                                 currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
                                     append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                                 }
+                                currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE -> {
+                                    append("\uD83D\uDE24The Party has had enough of comrade *$firstName*. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
+                                    append("\n\n")
+                                    append("Enjoy your last meal comrade.\uD83C\uDF46")
+                                }
                                 currentSocialCredits < 0 -> {
                                     append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
                                 }
@@ -161,7 +167,7 @@ object MessageHelper {
                             if (isSendingToUyghurCamp) {
                                 val uyghurJob = Jobs.uyghurCampJobs.random()
                                 append("\n\n")
-                                append("\uD83C\uDF34The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob. The Party is taking care of the bad comrades.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                                append("\uD83C\uDF34The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob. The Party disciplines bad citizens.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                             }
 
                             if (isReturningFromUyghurCamp) {
