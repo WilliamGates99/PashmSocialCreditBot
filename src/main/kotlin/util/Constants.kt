@@ -30,6 +30,7 @@ object Constants {
     internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 50
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 250L
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
+    internal const val SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE = -1000L
 
     internal const val PLUS_100_CREDIT = 100L
     internal const val PLUS_50_CREDIT = 50L
