@@ -26,7 +26,7 @@ object Constants {
 
     internal const val RATING_COOL_DOWN_IN_MINUTES = 30
     internal const val RATING_COOL_DOWN_IN_MILLIS = 30 * 60 * 1000L // 30 Minutes
-    internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 10
+    internal const val GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT = 50
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE = 250L
     internal const val MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF = 1000L
 
