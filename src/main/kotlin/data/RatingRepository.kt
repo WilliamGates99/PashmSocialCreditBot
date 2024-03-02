@@ -13,6 +13,7 @@ interface RatingRepository {
 
     fun updateUserSocialCredits(
         messageSenderId: Long,
+        messageSenderStatus: String,
         groupId: Long,
         groupTitle: String,
         userId: Long,

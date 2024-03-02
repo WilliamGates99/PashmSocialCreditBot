@@ -8,4 +8,5 @@ object UserRatingsHistoryTable : LongIdTable("user_ratings_history") {
     val targetUserId = long("targetUserId").index()
     val createdAt = long("createdAt").index()
     val modifiedAt = long("modifiedAt").index()
+    val modifiedAtDate = varchar("modifiedAtDate", length = 10).index()
 }

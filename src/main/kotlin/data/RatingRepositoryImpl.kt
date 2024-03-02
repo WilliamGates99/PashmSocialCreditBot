@@ -8,6 +8,7 @@ import domain.model.UserSocialCreditsInfo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import util.Constants
+import java.time.LocalDate
 
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
@@ -45,6 +46,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
     override fun updateUserSocialCredits(
         messageSenderId: Long,
+        messageSenderStatus: String,
         groupId: Long,
         groupTitle: String,
         userId: Long,
@@ -55,24 +57,45 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         return transaction {
             var ratingStatus: String? = null
             val currentTimeInMillis = System.currentTimeMillis()
+            val currentDate = LocalDate.now()
+            val currentDateString = currentDate.toString() // yyyy-MM-dd
 
             UserRatingsHistoryEntity.find {
                 (UserRatingsHistoryTable.groupId eq groupId) and
                         (UserRatingsHistoryTable.raterUserId eq messageSenderId) and
                         (UserRatingsHistoryTable.targetUserId eq userId)
             }.singleOrNull()?.apply {
-                val isCoolDownOver = currentTimeInMillis - this.modifiedAt > Constants.RATING_COOL_DOWN_IN_MILLIS
+                val isCoolDownOver = when (messageSenderStatus) {
+                    Constants.CHAT_MEMBER_STATUS_CREATOR, Constants.CHAT_MEMBER_STATUS_ADMIN -> {
+                        currentTimeInMillis - this.modifiedAt > Constants.RATING_COOL_DOWN_IN_MILLIS
+                    }
+                    Constants.CHAT_MEMBER_STATUS_MEMBER -> {
+                        val modifiedAtDate = LocalDate.parse(this.modifiedAtDate)
+                        val until = modifiedAtDate.until(currentDate)
+                        val intervalDays = until.days
+
+                        intervalDays > 0
+                    }
+                    else -> false
+                }
+
                 if (isCoolDownOver) {
                     this.modifiedAt = currentTimeInMillis
+                    this.modifiedAtDate = currentDateString
                 } else {
                     return@transaction Result.failure(Throwable("Cool-Down isn't over yet!"))
                 }
+            }.also {
+                println("User ratings history updated: $it")
             } ?: UserRatingsHistoryEntity.new {
                 this.groupId = groupId
                 this.raterUserId = messageSenderId
                 this.targetUserId = userId
                 this.createdAt = currentTimeInMillis
                 this.modifiedAt = currentTimeInMillis
+                this.modifiedAtDate = currentDateString
+            }.also {
+                println("User ratings history created: $it")
             }
 
             val userRating = UserSocialCreditsEntity

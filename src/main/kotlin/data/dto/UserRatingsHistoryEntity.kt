@@ -11,6 +11,7 @@ class UserRatingsHistoryEntity(id: EntityID<Long>) : LongEntity(id) {
     var targetUserId by UserRatingsHistoryTable.targetUserId
     var createdAt by UserRatingsHistoryTable.createdAt
     var modifiedAt by UserRatingsHistoryTable.modifiedAt
+    var modifiedAtDate by UserRatingsHistoryTable.modifiedAtDate
 
     companion object : LongEntityClass<UserRatingsHistoryEntity>(UserRatingsHistoryTable)
 
@@ -20,7 +21,8 @@ class UserRatingsHistoryEntity(id: EntityID<Long>) : LongEntity(id) {
             raterUserId = raterUserId,
             targetUserId = targetUserId,
             createdAt = createdAt,
-            modifiedAt = modifiedAt
+            modifiedAt = modifiedAt,
+            modifiedAtDate = modifiedAtDate
         )
     }
 }
