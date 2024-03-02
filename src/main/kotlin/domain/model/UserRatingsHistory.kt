@@ -5,5 +5,6 @@ data class UserRatingsHistory(
     val raterUserId: Long,
     val targetUserId: Long,
     val createdAt: Long,
-    val modifiedAt: Long
+    val modifiedAt: Long,
+    val modifiedAtDate: String
 )
