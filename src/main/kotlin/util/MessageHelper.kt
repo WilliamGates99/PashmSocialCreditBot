@@ -167,7 +167,9 @@ object MessageHelper {
                             if (isSendingToUyghurCamp) {
                                 val uyghurJob = Jobs.uyghurCampJobs.random()
                                 append("\n\n")
-                                append("\uD83C\uDF34The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob. The Party disciplines bad citizens.\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                                append("\uD83C\uDFD5The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob.")
+                                append("\n\n")
+                                append("\uD83D\uDC6E\uD83C\uDFFBWorking in the camp will discipline bad citizens.‼\uFE0F")
                             }
 
                             if (isReturningFromUyghurCamp) {
