@@ -85,12 +85,17 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 } else {
                     return@transaction Result.failure(Throwable("Cool-Down isn't over yet!"))
                 }
+            }.also {
+                println("User ratings history updated: $it")
             } ?: UserRatingsHistoryEntity.new {
                 this.groupId = groupId
                 this.raterUserId = messageSenderId
                 this.targetUserId = userId
                 this.createdAt = currentTimeInMillis
                 this.modifiedAt = currentTimeInMillis
+                this.modifiedAtDate = currentDateString
+            }.also {
+                println("User ratings history created: $it")
             }
 
             val userRating = UserSocialCreditsEntity
