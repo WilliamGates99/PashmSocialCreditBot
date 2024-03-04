@@ -126,6 +126,6 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        Result.failure(Throwable("updateUserSocialCredits failed with an exception."))
+        Result.failure(Throwable("Update user social credits failed with an exception."))
     }
 }
