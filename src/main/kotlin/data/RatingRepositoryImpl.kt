@@ -8,6 +8,7 @@ import domain.model.UserSocialCreditsInfo
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import util.Constants
+import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
 
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {
@@ -53,8 +54,8 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         username: String,
         firstName: String,
         socialCreditsChange: Long
-    ): Result<UserSocialCreditsInfo> {
-        return transaction {
+    ): Result<UserSocialCreditsInfo> = try {
+        transaction {
             var ratingStatus: String? = null
             val currentTimeInMillis = System.currentTimeMillis()
             val currentDate = LocalDate.now()
@@ -83,7 +84,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     this.modifiedAt = currentTimeInMillis
                     this.modifiedAtDate = currentDateString
                 } else {
-                    return@transaction Result.failure(Throwable("Cool-Down isn't over yet!"))
+                    return@transaction Result.failure(Throwable(THROWABLE_MESSAGE_COOL_DOWN))
                 }
             }.also {
                 println("User ratings history updated: $it")
@@ -123,5 +124,8 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 println("User social credits $ratingStatus: $it")
             })
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Result.failure(Throwable("updateUserSocialCredits failed with an exception."))
     }
 }
