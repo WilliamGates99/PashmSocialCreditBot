@@ -154,20 +154,20 @@ object MessageHelper {
 
                     @Suppress("ConvertTwoComparisonsToRangeCheck")
                     val isRevivingComrade = previousSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE &&
-                            SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE < currentSocialCredits
+                            currentSocialCredits > SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
 
                     val messageBuilder = StringBuilder().apply {
                         when {
                             currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
                                 append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                             }
+                            isRevivingComrade -> {
+                                append("\uD83D\uDE2EWow! Comrade $firstName* is miraculously revived with $currentSocialCredits social credits.")
+                            }
                             isExecutingComrade -> {
                                 append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
                                 append("\n\n")
                                 append("Enjoy your last meal comrade.\uD83C\uDF46")
-                            }
-                            isRevivingComrade -> {
-                                append("\uD83D\uDE2EWow! Comrade $firstName* is miraculously revived with $currentSocialCredits social credits.")
                             }
                             currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE -> {
                                 append("Executed comrade *$firstName* has $currentSocialCredits social credits.")
