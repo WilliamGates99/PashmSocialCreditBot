@@ -36,7 +36,6 @@ distTmp/
 outTmp/
 /test.output
 /kotlin-native/dist
-
 /data
 /db
 /secret.properties
