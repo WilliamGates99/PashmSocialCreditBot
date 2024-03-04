@@ -9,6 +9,7 @@ import data.RatingRepository
 import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import util.Constants.RATING_COOL_DOWN_IN_MINUTES
 import util.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
 
 object MessageHelper {
 
@@ -154,6 +155,11 @@ object MessageHelper {
                             currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
                                 append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                             }
+                            willComradeBeExecuted -> {
+                                append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
+                                append("\n\n")
+                                append("Enjoy your last meal comrade.\uD83C\uDF46")
+                            }
                             currentSocialCredits < 0 -> {
                                 append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
                             }
@@ -173,13 +179,6 @@ object MessageHelper {
                         if (isReturningFromUyghurCamp) {
                             append("\n\n\n")
                             append("\uD83C\uDFE1The party has decided to return comrade from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
-                        }
-
-                        if (willComradeBeExecuted) {
-                            append("\n\n")
-                            append("\uD83D\uDE24The Party has had enough of comrade *$firstName*. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
-                            append("\n\n")
-                            append("Enjoy your last meal comrade.\uD83C\uDF46")
                         }
                     }
 
@@ -216,10 +215,13 @@ object MessageHelper {
                 }
 
                 updateUserSocialCreditsResult.onFailure {
-                    when (messageSenderStatus) {
-                        Constants.CHAT_MEMBER_STATUS_CREATOR -> sendCoolDownMessage(message)
-                        Constants.CHAT_MEMBER_STATUS_ADMIN -> sendCoolDownMessage(message)
-                        Constants.CHAT_MEMBER_STATUS_MEMBER -> sendMemberPermissionMessage(message)
+                    val shouldSendCoolDownMessage = it.message == THROWABLE_MESSAGE_COOL_DOWN
+                    if (shouldSendCoolDownMessage) {
+                        when (messageSenderStatus) {
+                            Constants.CHAT_MEMBER_STATUS_CREATOR -> sendCoolDownMessage(message)
+                            Constants.CHAT_MEMBER_STATUS_ADMIN -> sendCoolDownMessage(message)
+                            Constants.CHAT_MEMBER_STATUS_MEMBER -> sendMemberPermissionMessage(message)
+                        }
                     }
                 }
             } else {

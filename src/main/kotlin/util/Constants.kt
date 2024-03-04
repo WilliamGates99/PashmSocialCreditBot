@@ -41,7 +41,9 @@ object Constants {
     internal const val MINUS_100_CREDIT = -100L
 
     internal const val SOCIAL_CLASS_CREDIT_POSITIVE_1000 = 1000L
-    internal const val SOCIAL_CLASS_CREDIT_POSITIVE250 = 250L
+    internal const val SOCIAL_CLASS_CREDIT_POSITIVE_250 = 250L
     internal const val SOCIAL_CLASS_CREDIT_NEGATIVE_250 = -250L
     internal const val SOCIAL_CLASS_CREDIT_NEGATIVE_1000 = -1000L
+
+    internal const val THROWABLE_MESSAGE_COOL_DOWN = "Cool-Down isn't over yet!"
 }

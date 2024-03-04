@@ -11,7 +11,7 @@ object SocialClass {
     fun getComradeSocialClass(socialCredits: Long): String {
         return when {
             socialCredits >= Constants.SOCIAL_CLASS_CREDIT_POSITIVE_1000 -> LEADER_LI_RIGHT_HAND
-            socialCredits >= Constants.SOCIAL_CLASS_CREDIT_POSITIVE250 -> GOOD_CITIZEN
+            socialCredits >= Constants.SOCIAL_CLASS_CREDIT_POSITIVE_250 -> GOOD_CITIZEN
             socialCredits <= Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000 -> TO_BE_EXECUTED
             socialCredits <= Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_250 -> BAD_CITIZEN
             else -> COMRADE
