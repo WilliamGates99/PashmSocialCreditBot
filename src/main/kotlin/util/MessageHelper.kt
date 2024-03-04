@@ -198,6 +198,14 @@ object MessageHelper {
                         )
                     }
 
+                    if (willComradeBeExecuted) {
+                        bot.sendAnimation(
+                            chatId = ChatId.fromId(message.chat.id),
+                            animation = TelegramFile.ByFileId(Gifs.EXECUTION_FILE_ID),
+                            disableNotification = true
+                        )
+                    }
+
                     if (currentSocialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
                         bot.sendAnimation(
                             chatId = ChatId.fromId(message.chat.id),

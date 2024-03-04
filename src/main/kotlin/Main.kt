@@ -74,6 +74,13 @@ fun main(args: Array<String>) {
             }
 
             message {
+                when (message.chat.type) {
+                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> Unit
+                    ChatTypes.PRIVATE.value -> {
+                        println("Gif File ID = ${message.animation?.fileId}")
+                    }
+                }
+
                 val shouldSendStickerSet = message.text?.lowercase(Locale.US) == MESSAGE_GET_STICKER_SET
                 if (shouldSendStickerSet) {
                     when (message.chat.type) {
