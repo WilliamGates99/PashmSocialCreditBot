@@ -147,18 +147,30 @@ object MessageHelper {
                     val currentSocialCredits = userSocialCreditsInfo.socialCredits
                     val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
                     val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
-                    val willComradeBeExecuted = currentSocialCredits.rangeUntil(previousSocialCredits)
-                        .contains(SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE) // currentSocialCredits <= -1000 < previousSocialCredits
+
+                    @Suppress("ConvertTwoComparisonsToRangeCheck")
+                    val isExecutingComrade = previousSocialCredits > SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE &&
+                            currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+
+                    @Suppress("ConvertTwoComparisonsToRangeCheck")
+                    val isRevivingComrade = previousSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE &&
+                            SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE < currentSocialCredits
 
                     val messageBuilder = StringBuilder().apply {
                         when {
                             currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
                                 append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                             }
-                            willComradeBeExecuted -> {
+                            isExecutingComrade -> {
                                 append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
                                 append("\n\n")
                                 append("Enjoy your last meal comrade.\uD83C\uDF46")
+                            }
+                            isRevivingComrade -> {
+                                append("\uD83D\uDE2EWow! Comrade $firstName* is miraculously revived with $currentSocialCredits social credits.")
+                            }
+                            currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE -> {
+                                append("Executed comrade *$firstName* has $currentSocialCredits social credits.")
                             }
                             currentSocialCredits < 0 -> {
                                 append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
@@ -197,10 +209,18 @@ object MessageHelper {
                         )
                     }
 
-                    if (willComradeBeExecuted) {
+                    if (isExecutingComrade) {
                         bot.sendAnimation(
                             chatId = ChatId.fromId(message.chat.id),
                             animation = TelegramFile.ByFileId(Gifs.EXECUTION_FILE_ID),
+                            disableNotification = true
+                        )
+                    }
+
+                    if (isRevivingComrade) {
+                        bot.sendAnimation(
+                            chatId = ChatId.fromId(message.chat.id),
+                            animation = TelegramFile.ByFileId(Gifs.REVIVALE_FILE_ID),
                             disableNotification = true
                         )
                     }

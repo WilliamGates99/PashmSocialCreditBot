@@ -6,4 +6,5 @@ object Gifs {
     internal const val POOH_AND_CJ_FILE_ID = "CgACAgQAAxkBAANZZZ6c5ydjcfJI9VHCZb9V3RNol3UAAqAEAAJpHGQHyeUWCiOJcY00BA"
     internal const val JOHN_XINA_FILE_ID = "CgACAgQAAxkBAAN5ZZ7Phj_VUxKpx6ICHiqN1OTTg_YAAnEDAALQ7CxQpYm4bk4Vags0BA"
     internal const val EXECUTION_FILE_ID = "CgACAgQAAxkBAAICsmXlkfBM6AzYxSOCNGHhRJsIM0pKAAKkAAM5_vFSKnqFipz6Zoc0BA"
+    internal const val REVIVALE_FILE_ID = "CgACAgQAAxkBAAICtWXltRyKPIc3Cwvcw9Bm0yXjX7eyAAJmBgACa7iAUgEWmywkxJ5mNAQ"
 }
