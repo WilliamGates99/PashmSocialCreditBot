@@ -14,7 +14,7 @@ import java.time.LocalDate
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
     init {
-        Database.connect("jdbc:sqlite:$dbPath")
+        Database.connect(url = "jdbc:sqlite:$dbPath")
 
         transaction {
             addLogger(StdOutSqlLogger)
@@ -87,7 +87,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     return@transaction Result.failure(Throwable(THROWABLE_MESSAGE_COOL_DOWN))
                 }
             }.also {
-                println("User ratings history updated: $it")
+                it?.let { println("User ratings history created: ${it.toUserRatingsHistory()}") }
             } ?: UserRatingsHistoryEntity.new {
                 this.groupId = groupId
                 this.raterUserId = messageSenderId
@@ -96,7 +96,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 this.modifiedAt = currentTimeInMillis
                 this.modifiedAtDate = currentDateString
             }.also {
-                println("User ratings history created: $it")
+                println("User ratings history updated: ${it.toUserRatingsHistory()}")
             }
 
             val userRating = UserSocialCreditsEntity
@@ -126,6 +126,6 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
         }
     } catch (e: Exception) {
         e.printStackTrace()
-        Result.failure(Throwable("updateUserSocialCredits failed with an exception."))
+        Result.failure(Throwable("Update user social credits failed with an exception."))
     }
 }

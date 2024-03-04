@@ -1,6 +1,7 @@
 package domain.model
 
 data class UserRatingsHistory(
+    val id: Long,
     val groupId: Long,
     val raterUserId: Long,
     val targetUserId: Long,

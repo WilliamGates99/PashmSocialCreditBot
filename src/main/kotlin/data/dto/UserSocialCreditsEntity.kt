@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
-class UserSocialCreditsEntity(id: EntityID<Long>) : LongEntity(id) {
+class UserSocialCreditsEntity(idEntity: EntityID<Long>) : LongEntity(id = idEntity) {
     var groupId by UsersSocialCreditsTable.groupId
     var groupTitle by UsersSocialCreditsTable.groupTitle
     var userId by UsersSocialCreditsTable.userId
@@ -15,10 +15,11 @@ class UserSocialCreditsEntity(id: EntityID<Long>) : LongEntity(id) {
     var createdAt by UsersSocialCreditsTable.createdAt
     var modifiedAt by UsersSocialCreditsTable.modifiedAt
 
-    companion object : LongEntityClass<UserSocialCreditsEntity>(UsersSocialCreditsTable)
+    companion object : LongEntityClass<UserSocialCreditsEntity>(table = UsersSocialCreditsTable)
 
     fun toUserSocialCreditsInfo(): UserSocialCreditsInfo {
         return UserSocialCreditsInfo(
+            id = id.value,
             groupId = groupId,
             groupTitle = groupTitle,
             userId = userId,
