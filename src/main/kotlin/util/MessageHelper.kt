@@ -176,6 +176,7 @@ object MessageHelper {
                         }
 
                         if (willComradeBeExecuted) {
+                            append("\n\n")
                             append("\uD83D\uDE24The Party has had enough of comrade *$firstName*. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
                             append("\n\n")
                             append("Enjoy your last meal comrade.\uD83C\uDF46")
