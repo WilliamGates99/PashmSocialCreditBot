@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.xeniac"
-version = "1.5.0"
+version = "1.5.1"
 
 kotlin {
     jvmToolchain(jdkVersion = 21)
@@ -34,7 +34,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
 
     // SQLite JDBC Library
-    implementation("org.xerial:sqlite-jdbc:3.45.0.0")
+    implementation("org.xerial:sqlite-jdbc:3.44.1.0") // DO NOT UPDATE -> CAUSES "ID IS NOT IN THE RECORD" ISSUE
 }
 
 tasks.withType<KotlinCompile> {
