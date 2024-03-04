@@ -146,16 +146,13 @@ object MessageHelper {
                     val currentSocialCredits = userSocialCreditsInfo.socialCredits
                     val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
                     val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
+                    val willComradeBeExecuted = currentSocialCredits.rangeUntil(previousSocialCredits)
+                        .contains(SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE) // currentSocialCredits <= -1000 < previousSocialCredits
 
                     val messageBuilder = StringBuilder().apply {
                         when {
                             currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
                                 append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
-                            }
-                            currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE -> {
-                                append("\uD83D\uDE24The Party has had enough of comrade *$firstName*. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
-                                append("\n\n")
-                                append("Enjoy your last meal comrade.\uD83C\uDF46")
                             }
                             currentSocialCredits < 0 -> {
                                 append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
@@ -177,6 +174,13 @@ object MessageHelper {
                             append("\n\n\n")
                             append("\uD83C\uDFE1The party has decided to return comrade from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                         }
+
+                        if (willComradeBeExecuted) {
+                            append("\n\n")
+                            append("\uD83D\uDE24The Party has had enough of comrade *$firstName*. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
+                            append("\n\n")
+                            append("Enjoy your last meal comrade.\uD83C\uDF46")
+                        }
                     }
 
                     bot.sendMessage(
@@ -190,6 +194,14 @@ object MessageHelper {
                         bot.sendAnimation(
                             chatId = ChatId.fromId(message.chat.id),
                             animation = TelegramFile.ByFileId(Gifs.POOH_AND_CJ_FILE_ID),
+                            disableNotification = true
+                        )
+                    }
+
+                    if (willComradeBeExecuted) {
+                        bot.sendAnimation(
+                            chatId = ChatId.fromId(message.chat.id),
+                            animation = TelegramFile.ByFileId(Gifs.EXECUTION_FILE_ID),
                             disableNotification = true
                         )
                     }
