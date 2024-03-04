@@ -36,9 +36,6 @@ dependencies {
     // SQLite JDBC Library
     implementation("org.xerial:sqlite-jdbc:3.45.0.0")
 }
-repositories {
-    mavenCentral()
-}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "21"
