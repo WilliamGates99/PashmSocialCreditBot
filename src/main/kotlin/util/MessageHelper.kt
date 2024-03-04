@@ -162,7 +162,7 @@ object MessageHelper {
                                 append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                             }
                             isRevivingComrade -> {
-                                append("\uD83D\uDE2EWow! Comrade $firstName* is miraculously revived with $currentSocialCredits social credits.")
+                                append("\uD83D\uDE2EWow! Comrade *$firstName* is miraculously revived with $currentSocialCredits social credits.")
                             }
                             isExecutingComrade -> {
                                 append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
