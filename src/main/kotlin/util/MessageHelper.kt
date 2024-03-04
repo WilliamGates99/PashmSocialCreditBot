@@ -235,6 +235,8 @@ object MessageHelper {
                 }
 
                 updateUserSocialCreditsResult.onFailure {
+                    println(it.message)
+
                     val shouldSendCoolDownMessage = it.message == THROWABLE_MESSAGE_COOL_DOWN
                     if (shouldSendCoolDownMessage) {
                         when (messageSenderStatus) {
