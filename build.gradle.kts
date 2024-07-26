@@ -9,7 +9,7 @@ group = "com.xeniac"
 version = "1.6.0"
 
 kotlin {
-    jvmToolchain(jdkVersion = 22)
+    jvmToolchain(jdkVersion = 21)
 }
 
 dependencies {
@@ -38,7 +38,7 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "22"
+    kotlinOptions.jvmTarget = "21"
 }
 
 application {
