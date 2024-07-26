@@ -1,4 +1,4 @@
-package data
+package domain.repositories
 
 import domain.model.UserSocialCreditsInfo
 

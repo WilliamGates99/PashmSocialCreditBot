@@ -1,15 +1,19 @@
-package data
+package data.repositories
 
 import data.dto.UserRatingsHistoryEntity
 import data.dto.UserRatingsHistoryTable
 import data.dto.UserSocialCreditsEntity
 import data.dto.UsersSocialCreditsTable
 import domain.model.UserSocialCreditsInfo
+import domain.repositories.RatingRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import util.Constants
 import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
+import kotlin.also
+import kotlin.apply
+import kotlin.let
 
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
@@ -75,7 +79,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                         val until = modifiedAtDate.until(currentDate)
                         val intervalDays = until.days
 
-                        intervalDays > 0
+                        intervalDays >= Constants.RATING_COOL_DOWN_FOR_MEMBERS_IN_DAYS
                     }
                     else -> false
                 }
