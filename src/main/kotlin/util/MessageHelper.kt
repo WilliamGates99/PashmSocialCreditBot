@@ -5,7 +5,7 @@ import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
 import com.github.kotlintelegrambot.entities.TelegramFile
-import data.RatingRepository
+import domain.repositories.RatingRepository
 import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import util.Constants.RATING_COOL_DOWN_IN_MINUTES
 import util.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE

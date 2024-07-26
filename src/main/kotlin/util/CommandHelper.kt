@@ -4,7 +4,7 @@ import com.github.kotlintelegrambot.dispatcher.handlers.CommandHandlerEnvironmen
 import com.github.kotlintelegrambot.entities.ChatId
 import com.github.kotlintelegrambot.entities.Message
 import com.github.kotlintelegrambot.entities.ParseMode
-import data.RatingRepository
+import domain.repositories.RatingRepository
 import util.Constants.COMMAND_SHOW_MY_CREDITS
 import util.Constants.COMMAND_SHOW_OTHERS_CREDITS
 import kotlin.random.Random
