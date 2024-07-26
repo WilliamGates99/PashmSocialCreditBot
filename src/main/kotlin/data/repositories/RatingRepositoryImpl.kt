@@ -91,7 +91,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     return@transaction Result.failure(Throwable(THROWABLE_MESSAGE_COOL_DOWN))
                 }
             }.also {
-                it?.let { println("User ratings history created: ${it.toUserRatingsHistory()}") }
+                it?.let { println("User ratings history updated: ${it.toUserRatingsHistory()}") }
             } ?: UserRatingsHistoryEntity.new {
                 this.groupId = groupId
                 this.raterUserId = messageSenderId
@@ -100,7 +100,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 this.modifiedAt = currentTimeInMillis
                 this.modifiedAtDate = currentDateString
             }.also {
-                println("User ratings history updated: ${it.toUserRatingsHistory()}")
+                println("User ratings history created: ${it.toUserRatingsHistory()}")
             }
 
             val userRating = UserSocialCreditsEntity
@@ -109,7 +109,9 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     this.groupTitle = groupTitle
                     this.username = username
                     this.firstName = firstName
-                    this.socialCredits += socialCreditsChange
+                    this.socialCredits = (this.socialCredits + socialCreditsChange).coerceAtLeast(
+                        minimumValue = Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+                    )
                     this.modifiedAt = currentTimeInMillis
                     ratingStatus = "updated"
                 } ?: UserSocialCreditsEntity.new {
@@ -118,7 +120,9 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 this.userId = userId
                 this.username = username
                 this.firstName = firstName
-                this.socialCredits = socialCreditsChange
+                this.socialCredits = socialCreditsChange.coerceAtLeast(
+                    minimumValue = Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+                )
                 this.createdAt = currentTimeInMillis
                 this.modifiedAt = currentTimeInMillis
                 ratingStatus = "created"
