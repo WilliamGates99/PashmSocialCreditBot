@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "2.0.0"
     application
 }
 
@@ -9,36 +9,36 @@ group = "com.xeniac"
 version = "1.5.1"
 
 kotlin {
-    jvmToolchain(jdkVersion = 21)
+    jvmToolchain(jdkVersion = 22)
 }
 
 dependencies {
     // Kotlin Telegram Bot Library
-    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+    implementation(libs.kotlin.telegram.bot)
 
     // Google Gson Library
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.gson)
 
     // Square OkHttp Library
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
-    implementation("com.squareup.okhttp3:okhttp")
-    implementation("com.squareup.okhttp3:logging-interceptor")
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     // Square Retrofit Library
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 
     // Exposed SQL library
-    implementation("org.jetbrains.exposed:exposed-core:0.46.0")
-    implementation("org.jetbrains.exposed:exposed-dao:0.46.0")
-    implementation("org.jetbrains.exposed:exposed-jdbc:0.46.0")
+    implementation(libs.exposed.core)
+    implementation(libs.exposed.dao)
+    implementation(libs.exposed.jdbc)
 
     // SQLite JDBC Library
-    implementation("org.xerial:sqlite-jdbc:3.44.1.0") // DO NOT UPDATE -> CAUSES "ID IS NOT IN THE RECORD" ISSUE
+    implementation(libs.sqlite.jdbc)
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "21"
+    kotlinOptions.jvmTarget = "22"
 }
 
 application {
