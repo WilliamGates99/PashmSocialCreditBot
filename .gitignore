@@ -25,6 +25,7 @@ build/
 !**/test/**/build
 *.iml
 .idea/
+.kotlin/
 !**/testData/**/*.iml
 kotlin-ultimate/
 node_modules/
