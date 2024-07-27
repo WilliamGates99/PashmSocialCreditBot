@@ -139,7 +139,7 @@ object MessageHelper {
                 if (isGivingNegativeCreditToExecutedComrade) {
                     bot.sendMessage(
                         chatId = ChatId.fromId(message.chat.id),
-                        text = "You can't give *executed☠\uFE0F* comrades negative social credits anymore.‼\uFE0F",
+                        text = "\uD83D\uDE35There's no comrade by this name in the party.",
                         disableNotification = true,
                         parseMode = ParseMode.MARKDOWN
                     )
