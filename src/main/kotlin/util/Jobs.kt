@@ -12,6 +12,7 @@ object Jobs {
         "assembling iPhones",
         "assembling iPads",
         "assembling MacBooks",
-        "washing party members' feet"
+        "washing party members' feet",
+        "cleaning toilets"
     )
 }

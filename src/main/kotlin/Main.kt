@@ -2,8 +2,8 @@ import com.github.kotlintelegrambot.bot
 import com.github.kotlintelegrambot.dispatch
 import com.github.kotlintelegrambot.dispatcher.command
 import com.github.kotlintelegrambot.dispatcher.message
-import data.RatingRepository
-import data.RatingRepositoryImpl
+import data.repositories.RatingRepositoryImpl
+import domain.repositories.RatingRepository
 import util.ChatTypes
 import util.CommandHelper.sendNotGroupMessage
 import util.CommandHelper.sendWinnieThePoohTextArt
