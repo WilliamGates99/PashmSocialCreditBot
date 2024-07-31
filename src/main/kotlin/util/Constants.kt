@@ -4,6 +4,10 @@ object Constants {
 
     internal const val PROPERTY_BOT_TOKEN = "BOT_TOKEN"
     internal const val PROPERTY_RATING_DB_PATH = "RATING_DB_PATH"
+    internal const val PROXY_HOST = "PROXY_HOST"
+    internal const val PROXY_PORT = "PROXY_PORT"
+    internal const val PROXY_USERNAME = "PROXY_USERNAME"
+    internal const val PROXY_PASSWORD = "PROXY_PASSWORD"
 
     internal const val CHAT_MEMBER_STATUS_CREATOR = "creator"
     internal const val CHAT_MEMBER_STATUS_ADMIN = "administrator"
