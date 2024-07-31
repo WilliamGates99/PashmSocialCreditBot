@@ -1,4 +1,4 @@
-package util
+package utils
 
 import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.chat.members.getChatMember
@@ -17,11 +17,11 @@ import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.Message
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
-import util.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
-import util.Constants.RATING_COOL_DOWN_IN_MINUTES
-import util.Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
-import util.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
-import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
+import utils.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
+import utils.Constants.RATING_COOL_DOWN_IN_MINUTES
+import utils.Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
+import utils.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 
 object MessageHelper {
 

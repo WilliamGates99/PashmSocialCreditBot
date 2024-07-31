@@ -1,4 +1,4 @@
-package util
+package utils
 
 object Gifs {
     internal const val COTTON_FARM_FILE_ID = "CgACAgQAAxkBAANfZZ6fI3peqNrZvmxeP_OXbV1DVT0AAl8GAAK1GSBRIB_fe0osYoY0BA"

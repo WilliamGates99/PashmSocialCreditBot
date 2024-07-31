@@ -1,4 +1,4 @@
-package util
+package utils
 
 import dev.inmo.tgbotapi.types.chat.PrivateChatImpl
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage

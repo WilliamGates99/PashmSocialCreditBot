@@ -9,8 +9,8 @@ import domain.model.UserSocialCreditsInfo
 import domain.repositories.RatingRepository
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import util.Constants
-import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
+import utils.Constants
+import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
 
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {

@@ -1,4 +1,4 @@
-package util
+package utils
 
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -13,8 +13,8 @@ import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.Message
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
-import util.Constants.COMMAND_SHOW_MY_CREDITS
-import util.Constants.COMMAND_SHOW_OTHERS_CREDITS
+import utils.Constants.COMMAND_SHOW_MY_CREDITS
+import utils.Constants.COMMAND_SHOW_OTHERS_CREDITS
 import kotlin.random.Random
 
 @OptIn(RiskFeature::class)
