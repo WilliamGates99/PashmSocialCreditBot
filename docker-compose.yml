@@ -2,7 +2,7 @@ version: '2.29.1'
 
 services:
   app:
-    image: williamgates99/pashm-social-credit-bot:1.6.1
+    image: williamgates99/pashm-social-credit-bot:2.0.0
     volumes:
       - ./data:/data/
     restart: always
