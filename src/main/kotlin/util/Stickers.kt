@@ -1,6 +1,9 @@
 package util
 
-import com.github.kotlintelegrambot.entities.Message
+import dev.inmo.tgbotapi.types.chat.PrivateChatImpl
+import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
+import dev.inmo.tgbotapi.types.message.content.StickerContent
+import dev.inmo.tgbotapi.utils.RiskFeature
 
 object Stickers {
 
@@ -40,18 +43,24 @@ object Stickers {
         "AgADNxMAAmUfMFE"
     )
 
-    fun Message.getSocialCreditChange(): Long? {
-        println("sticker fileUniqueId: ${sticker?.fileUniqueId}")
-        println("sticker fileId: ${sticker?.fileId}")
+    @OptIn(RiskFeature::class)
+    fun ContentMessage<StickerContent>.getSocialCreditChange(): Long? {
+        when (this.chat) {
+            is PrivateChatImpl -> {
+                println("sticker fileUniqueId: ${content.media.fileUniqueId}")
+                println("sticker fileId: ${content.media.fileId}")
+            }
+            else -> Unit
+        }
 
         return when {
-            plus100SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.PLUS_100_CREDIT
-            plus50SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.PLUS_50_CREDIT
-            plus20SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.PLUS_20_CREDIT
-            zeroChangeSocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.ZERO_CHANGE_CREDIT
-            minus20SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.MINUS_20_CREDIT
-            minus50SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.MINUS_50_CREDIT
-            minus100SocialCreditStickers.contains(sticker?.fileUniqueId) -> Constants.MINUS_100_CREDIT
+            plus100SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.PLUS_100_CREDIT
+            plus50SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.PLUS_50_CREDIT
+            plus20SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.PLUS_20_CREDIT
+            zeroChangeSocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.ZERO_CHANGE_CREDIT
+            minus20SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.MINUS_20_CREDIT
+            minus50SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.MINUS_50_CREDIT
+            minus100SocialCreditStickers.contains(content.media.fileUniqueId.string) -> Constants.MINUS_100_CREDIT
             else -> null
         }
     }
