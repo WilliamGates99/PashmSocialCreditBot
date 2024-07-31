@@ -4,17 +4,13 @@ import dev.inmo.tgbotapi.extensions.api.bot.getMe
 import dev.inmo.tgbotapi.extensions.api.telegramBot
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
-import dev.inmo.tgbotapi.extensions.utils.botOrNull
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.animation
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.reply_to_message
 import dev.inmo.tgbotapi.extensions.utils.shortcuts.animationMessages
 import dev.inmo.tgbotapi.extensions.utils.shortcuts.stickerMessages
 import dev.inmo.tgbotapi.extensions.utils.shortcuts.textMessages
-import dev.inmo.tgbotapi.types.chat.ForumChatImpl
-import dev.inmo.tgbotapi.types.chat.GroupChatImpl
-import dev.inmo.tgbotapi.types.chat.PrivateChatImpl
-import dev.inmo.tgbotapi.types.chat.SupergroupChatImpl
+import dev.inmo.tgbotapi.types.chat.*
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
 import io.ktor.client.engine.*
@@ -235,7 +231,11 @@ fun main(args: Array<String>) {
                         return@subscribe
                     }
 
-                    val isReplyingToBot = stickerMessage.reply_to_message?.from?.botOrNull() != null
+                    val isReplyingToBot = when (stickerMessage.reply_to_message?.from) {
+                        is ExtendedBot -> true
+                        is CommonBot -> true
+                        else -> false
+                    }
                     if (isReplyingToBot) {
                         when (stickerMessage.chat) {
                             is GroupChatImpl -> sendCreditingBotProhibitionMessage(stickerMessage)
