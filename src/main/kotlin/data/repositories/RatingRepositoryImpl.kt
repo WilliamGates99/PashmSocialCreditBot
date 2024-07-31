@@ -4,6 +4,7 @@ import data.dto.UserRatingsHistoryEntity
 import data.dto.UserRatingsHistoryTable
 import data.dto.UserSocialCreditsEntity
 import data.dto.UsersSocialCreditsTable
+import dev.inmo.tgbotapi.types.chat.member.ChatMember
 import domain.model.UserSocialCreditsInfo
 import domain.repositories.RatingRepository
 import org.jetbrains.exposed.sql.*
@@ -11,9 +12,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import util.Constants
 import util.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
-import kotlin.also
-import kotlin.apply
-import kotlin.let
 
 class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
@@ -51,7 +49,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
 
     override fun updateUserSocialCredits(
         messageSenderId: Long,
-        messageSenderStatus: String,
+        messageSenderStatus: ChatMember.Status,
         groupId: Long,
         groupTitle: String,
         userId: Long,
@@ -71,10 +69,10 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                         (UserRatingsHistoryTable.targetUserId eq userId)
             }.singleOrNull()?.apply {
                 val isCoolDownOver = when (messageSenderStatus) {
-                    Constants.CHAT_MEMBER_STATUS_CREATOR, Constants.CHAT_MEMBER_STATUS_ADMIN -> {
+                    ChatMember.Status.Creator, ChatMember.Status.Administrator -> {
                         currentTimeInMillis - this.modifiedAt > Constants.RATING_COOL_DOWN_IN_MILLIS
                     }
-                    Constants.CHAT_MEMBER_STATUS_MEMBER -> {
+                    ChatMember.Status.Member -> {
                         val modifiedAtDate = LocalDate.parse(this.modifiedAtDate)
                         val until = modifiedAtDate.until(currentDate)
                         val intervalDays = until.days

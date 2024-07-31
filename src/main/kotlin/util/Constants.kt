@@ -9,10 +9,6 @@ object Constants {
     internal const val PROXY_USERNAME = "PROXY_USERNAME"
     internal const val PROXY_PASSWORD = "PROXY_PASSWORD"
 
-    internal const val CHAT_MEMBER_STATUS_CREATOR = "creator"
-    internal const val CHAT_MEMBER_STATUS_ADMIN = "administrator"
-    internal const val CHAT_MEMBER_STATUS_MEMBER = "member"
-
     internal const val COMMAND_SEND_TEXT_ART_XI_JINPING = "xi"
     internal const val COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH = "pooh"
     internal const val COMMAND_SHOW_COMRADES_RANK = "comradesrank"

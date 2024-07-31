@@ -1,10 +1,26 @@
-import com.github.kotlintelegrambot.bot
-import com.github.kotlintelegrambot.dispatch
-import com.github.kotlintelegrambot.dispatcher.command
-import com.github.kotlintelegrambot.dispatcher.message
 import data.repositories.RatingRepositoryImpl
+import dev.inmo.micro_utils.coroutines.subscribe
+import dev.inmo.tgbotapi.extensions.api.bot.getMe
+import dev.inmo.tgbotapi.extensions.api.telegramBot
+import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
+import dev.inmo.tgbotapi.extensions.behaviour_builder.triggers_handling.onCommand
+import dev.inmo.tgbotapi.extensions.utils.botOrNull
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.animation
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.reply_to_message
+import dev.inmo.tgbotapi.extensions.utils.shortcuts.animationMessages
+import dev.inmo.tgbotapi.extensions.utils.shortcuts.stickerMessages
+import dev.inmo.tgbotapi.extensions.utils.shortcuts.textMessages
+import dev.inmo.tgbotapi.types.chat.ForumChatImpl
+import dev.inmo.tgbotapi.types.chat.GroupChatImpl
+import dev.inmo.tgbotapi.types.chat.PrivateChatImpl
+import dev.inmo.tgbotapi.types.chat.SupergroupChatImpl
+import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
-import util.ChatTypes
+import io.ktor.client.engine.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import util.CommandHelper.sendNotGroupMessage
 import util.CommandHelper.sendWinnieThePoohTextArt
 import util.CommandHelper.sendXiJinpingTextArt
@@ -25,168 +41,245 @@ import util.MessageHelper.sendCreditingBotProhibitionMessage
 import util.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
 import util.MessageHelper.sendCreditingYourselfProhibitionMessage
 import util.MessageHelper.sendLongLiveTheKingSticker
-import util.MessageHelper.sendNotGroupMessage
 import util.MessageHelper.sendStickerSet
 import util.MessageHelper.sendUpdateUserSocialCreditResultMessage
 import util.MessageHelper.sendWomenGif
 import util.MessageHelper.sendZeroChangeTrollMessage
 import util.PropertiesHelper
 import util.Stickers.getSocialCreditChange
+import java.net.Authenticator
+import java.net.PasswordAuthentication
 import java.util.*
 
+@OptIn(RiskFeature::class)
 fun main(args: Array<String>) {
     val propertiesHelper = PropertiesHelper(propertiesFilePath = args[0])
     val ratingRepository: RatingRepository = RatingRepositoryImpl(dbPath = propertiesHelper.getDbPath())
 
-    val telegramBot = bot {
+    val telegramBot = telegramBot(
         token = propertiesHelper.getBotToken()
+    ) {
+        Authenticator.setDefault(object : Authenticator() {
+            override fun getPasswordAuthentication(): PasswordAuthentication? {
+                val isRequestSentToProxy = requestingHost.lowercase(
+                    Locale.US
+                ) == propertiesHelper.getProxyHost().lowercase(Locale.US)
 
-        dispatch {
-            command(Constants.COMMAND_SEND_TEXT_ART_XI_JINPING) {
-                sendXiJinpingTextArt(message)
+                return if (isRequestSentToProxy) PasswordAuthentication(
+                    /* userName = */ propertiesHelper.getProxyUsername(),
+                    /* password = */ propertiesHelper.getProxyPassword().toCharArray()
+                ) else null
             }
+        })
 
-            command(Constants.COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH) {
-                sendWinnieThePoohTextArt(message)
-            }
+        engine {
+            proxy = ProxyBuilder.socks(
+                host = propertiesHelper.getProxyHost(),
+                port = propertiesHelper.getProxyPort().toInt()
+            )
+        }
+    }
 
-            command(Constants.COMMAND_SHOW_MY_CREDITS) {
-                when (message.chat.type) {
-                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> showMyCredits(message, ratingRepository)
-                    ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+    runBlocking {
+        launch(context = Dispatchers.IO) {
+            telegramBot.buildBehaviourWithLongPolling {
+                onCommand(command = Constants.COMMAND_SEND_TEXT_ART_XI_JINPING) { message ->
+                    sendXiJinpingTextArt(message)
                 }
-            }
 
-            command(Constants.COMMAND_SHOW_OTHERS_CREDITS) {
-                when (message.chat.type) {
-                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> showOthersCredits(message, ratingRepository)
-                    ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                onCommand(command = Constants.COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH) { message ->
+                    sendWinnieThePoohTextArt(message)
                 }
-            }
 
-            command(Constants.COMMAND_SHOW_COMRADES_RANK) {
-                when (message.chat.type) {
-                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                        showGroupSocialCreditsList(message, ratingRepository)
-                    }
-                    ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
-                }
-            }
-
-            message {
-                when (message.chat.type) {
-                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> Unit
-                    ChatTypes.PRIVATE.value -> {
-                        println("Gif File ID = ${message.animation?.fileId}")
+                onCommand(command = Constants.COMMAND_SHOW_MY_CREDITS) { message ->
+                    when (message.chat) {
+                        is GroupChatImpl -> showMyCredits(message, ratingRepository)
+                        is SupergroupChatImpl -> showMyCredits(message, ratingRepository)
+                        is ForumChatImpl -> showMyCredits(message, ratingRepository)
+                        is PrivateChatImpl -> sendNotGroupMessage(message)
+                        else -> Unit
                     }
                 }
 
-                val shouldSendStickerSet = message.text?.lowercase(Locale.US) == MESSAGE_GET_STICKER_SET
-                if (shouldSendStickerSet) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> Unit
-                        ChatTypes.PRIVATE.value -> sendStickerSet(message)
+                onCommand(command = Constants.COMMAND_SHOW_OTHERS_CREDITS) { message ->
+                    when (message.chat) {
+                        is GroupChatImpl -> showOthersCredits(message, ratingRepository)
+                        is SupergroupChatImpl -> showOthersCredits(message, ratingRepository)
+                        is ForumChatImpl -> showOthersCredits(message, ratingRepository)
+                        is PrivateChatImpl -> sendNotGroupMessage(message)
+                        else -> Unit
                     }
-                    return@message
                 }
 
-                val shouldSendLongLiveTheKingSticker = when {
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
-                    else -> false
-                }
-                if (shouldSendLongLiveTheKingSticker) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendLongLiveTheKingSticker(message)
-                        ChatTypes.PRIVATE.value -> Unit
+                onCommand(command = Constants.COMMAND_SHOW_COMRADES_RANK) { message ->
+                    when (message.chat) {
+                        is GroupChatImpl -> showGroupSocialCreditsList(message, ratingRepository)
+                        is SupergroupChatImpl -> showGroupSocialCreditsList(message, ratingRepository)
+                        is ForumChatImpl -> showGroupSocialCreditsList(message, ratingRepository)
+                        is PrivateChatImpl -> sendNotGroupMessage(message)
+                        else -> Unit
                     }
-                    return@message
                 }
 
-                val shouldSendWomenGif = when {
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
-                    message.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
-                    message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
-                    else -> false
-                }
-                if (shouldSendWomenGif) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendWomenGif(message)
-                        ChatTypes.PRIVATE.value -> Unit
+                animationMessages().subscribe(scope = this@launch) { gifMessage ->
+                    when (gifMessage.chat) {
+                        is PrivateChatImpl -> println("Gif Animation = ${gifMessage.animation}")
+                        else -> Unit
                     }
-                    return@message
                 }
 
-                if (message.sticker == null || message.replyToMessage?.from == null) {
-                    return@message
-                }
+                // TODO: BEGIN OF TEMP
+//                imageMessages().subscribe(scope = this@launch) { imageMessage ->
+//                    imageMessage.content.text
+//                    when (imageMessage.chat) {
+//                        is PrivateChatImpl -> {
+//                            println("image message = $imageMessage")
+//                            val caption = imageMessage.content.text
+//                        }
+//                        else -> Unit
+//                    }
+//                }
+                // TODO: END OF TEMP
 
-                val socialCreditsChange = message.getSocialCreditChange() ?: return@message
-
-                val isUserReplyingThemself = message.from?.id == message.replyToMessage?.from?.id
-                if (isUserReplyingThemself) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                            sendCreditingYourselfProhibitionMessage(message)
+                textMessages().subscribe(scope = this@launch) { message ->
+                    val shouldSendStickerSet = message.content.text.lowercase(Locale.US) == MESSAGE_GET_STICKER_SET
+                    if (shouldSendStickerSet) {
+                        when (message.chat) {
+                            is PrivateChatImpl -> sendStickerSet(message)
+                            else -> Unit
                         }
-                        ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                        return@subscribe
                     }
-                    return@message
-                }
 
-                val botUser = bot.getMe().get()
-                val isUserReplyingSocialCreditBot = message.replyToMessage?.from?.username == botUser.username
-                if (isUserReplyingSocialCreditBot) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                            sendCreditingSocialCreditBotProhibitionMessage(message)
+                    val shouldSendLongLiveTheKingSticker = when {
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_LONG_LIVE_THE_KING) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_KING_MASOUD) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_BIG_MASOUD) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_MASOUD) -> true
+                        // message.content.caption?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true TODO: ADD FOR IMAGE, VOICE, VIDEO, ETC
+                        // message.content.caption?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true TODO: ADD FOR IMAGE, VOICE, VIDEO, ETC
+                        // message.content.caption?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true TODO: ADD FOR IMAGE, VOICE, VIDEO, ETC
+                        // message.content.caption?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true TODO: ADD FOR IMAGE, VOICE, VIDEO, ETC
+                        else -> false
+                    }
+                    if (shouldSendLongLiveTheKingSticker) {
+                        when (message.chat) {
+                            is GroupChatImpl -> sendLongLiveTheKingSticker(message)
+                            is SupergroupChatImpl -> sendLongLiveTheKingSticker(message)
+                            is ForumChatImpl -> sendLongLiveTheKingSticker(message)
+                            else -> Unit
                         }
-                        ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                        return@subscribe
                     }
-                    return@message
+
+                    val shouldSendWomenGif = when {
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_WOMEN_COFFEE_1) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_WOMEN_COFFEE_2) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_WOMEN) -> true
+                        message.content.text.lowercase(Locale.US).contains(MESSAGE_WOMEN_BRAIN) -> true
+//                        message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+//                        message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
+//                        message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
+//                        message.caption?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
+                        else -> false
+                    }
+                    if (shouldSendWomenGif) {
+                        when (message.chat) {
+                            is GroupChatImpl -> sendWomenGif(message)
+                            is SupergroupChatImpl -> sendWomenGif(message)
+                            is ForumChatImpl -> sendWomenGif(message)
+                            else -> Unit
+                        }
+                        return@subscribe
+                    }
                 }
 
-                val isReplyingToBot = message.replyToMessage?.from?.isBot == true
-                if (isReplyingToBot) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendCreditingBotProhibitionMessage(message)
-                        ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                stickerMessages().subscribe(scope = this@launch) { stickerMessage ->
+                    when (stickerMessage.chat) {
+                        is PrivateChatImpl -> println("Sticker Content = ${stickerMessage.content}")
+                        else -> Unit
                     }
-                    return@message
                 }
 
-                if (socialCreditsChange == 0L) {
-                    when (message.chat.type) {
-                        ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> sendZeroChangeTrollMessage(message)
-                        ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+                stickerMessages().subscribe(scope = this@launch) { stickerMessage ->
+                    val isStickerReplyingToMessage = stickerMessage.reply_to_message?.from != null
+                    if (!isStickerReplyingToMessage) {
+                        return@subscribe
                     }
-                    return@message
-                }
 
-                when (message.chat.type) {
-                    ChatTypes.SUPERGROUP.value, ChatTypes.GROUP.value -> {
-                        sendUpdateUserSocialCreditResultMessage(
-                            message = message,
-                            socialCreditsChange = socialCreditsChange,
-                            ratingRepository = ratingRepository
-                        )
+                    val socialCreditsChange = stickerMessage.getSocialCreditChange() ?: return@subscribe
+
+                    val isUserReplyingThemself = stickerMessage.from?.id == stickerMessage.reply_to_message?.from?.id
+                    if (isUserReplyingThemself) {
+                        when (stickerMessage.chat) {
+                            is GroupChatImpl -> sendCreditingYourselfProhibitionMessage(stickerMessage)
+                            is SupergroupChatImpl -> sendCreditingYourselfProhibitionMessage(stickerMessage)
+                            is ForumChatImpl -> sendCreditingYourselfProhibitionMessage(stickerMessage)
+                            is PrivateChatImpl -> sendNotGroupMessage(stickerMessage)
+                            else -> Unit
+                        }
+                        return@subscribe
                     }
-                    ChatTypes.PRIVATE.value -> sendNotGroupMessage(message)
+
+                    val botUser = telegramBot.getMe()
+                    val isUserReplyingToSocialCreditBot = stickerMessage.reply_to_message
+                        ?.from?.username == botUser.username
+                    if (isUserReplyingToSocialCreditBot) {
+                        when (stickerMessage.chat) {
+                            is GroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(stickerMessage)
+                            is SupergroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(stickerMessage)
+                            is ForumChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(stickerMessage)
+                            is PrivateChatImpl -> sendNotGroupMessage(stickerMessage)
+                            else -> Unit
+                        }
+                        return@subscribe
+                    }
+
+                    val isReplyingToBot = stickerMessage.reply_to_message?.from?.botOrNull() != null
+                    if (isReplyingToBot) {
+                        when (stickerMessage.chat) {
+                            is GroupChatImpl -> sendCreditingBotProhibitionMessage(stickerMessage)
+                            is SupergroupChatImpl -> sendCreditingBotProhibitionMessage(stickerMessage)
+                            is ForumChatImpl -> sendCreditingBotProhibitionMessage(stickerMessage)
+                            is PrivateChatImpl -> sendNotGroupMessage(stickerMessage)
+                            else -> Unit
+                        }
+                        return@subscribe
+                    }
+
+                    if (socialCreditsChange == 0L) {
+                        when (stickerMessage.chat) {
+                            is GroupChatImpl -> sendZeroChangeTrollMessage(stickerMessage)
+                            is SupergroupChatImpl -> sendZeroChangeTrollMessage(stickerMessage)
+                            is ForumChatImpl -> sendZeroChangeTrollMessage(stickerMessage)
+                            is PrivateChatImpl -> sendNotGroupMessage(stickerMessage)
+                            else -> Unit
+                        }
+                        return@subscribe
+                    } else {
+                        when (stickerMessage.chat) {
+                            is GroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                                message = stickerMessage,
+                                socialCreditsChange = socialCreditsChange,
+                                ratingRepository = ratingRepository
+                            )
+                            is SupergroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                                message = stickerMessage,
+                                socialCreditsChange = socialCreditsChange,
+                                ratingRepository = ratingRepository
+                            )
+                            is ForumChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                                message = stickerMessage,
+                                socialCreditsChange = socialCreditsChange,
+                                ratingRepository = ratingRepository
+                            )
+                            is PrivateChatImpl -> sendNotGroupMessage(stickerMessage)
+                            else -> Unit
+                        }
+                        return@subscribe
+                    }
                 }
             }
         }
     }
-
-    telegramBot.startPolling()
 }

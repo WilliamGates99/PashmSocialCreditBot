@@ -1,5 +1,6 @@
 package domain.repositories
 
+import dev.inmo.tgbotapi.types.chat.member.ChatMember
 import domain.model.UserSocialCreditsInfo
 
 interface RatingRepository {
@@ -13,7 +14,7 @@ interface RatingRepository {
 
     fun updateUserSocialCredits(
         messageSenderId: Long,
-        messageSenderStatus: String,
+        messageSenderStatus: ChatMember.Status,
         groupId: Long,
         groupTitle: String,
         userId: Long,
