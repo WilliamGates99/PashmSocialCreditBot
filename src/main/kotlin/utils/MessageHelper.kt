@@ -14,14 +14,25 @@ import dev.inmo.tgbotapi.types.chat.GroupChatImpl
 import dev.inmo.tgbotapi.types.chat.SupergroupChatImpl
 import dev.inmo.tgbotapi.types.chat.member.ChatMember
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
+import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.abstracts.Message
+import dev.inmo.tgbotapi.types.message.content.TextedMediaContent
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
+import utils.Constants.MESSAGE_BIG_MASOUD
+import utils.Constants.MESSAGE_KING_MASOUD
+import utils.Constants.MESSAGE_LONG_LIVE_THE_KING
+import utils.Constants.MESSAGE_MASOUD
+import utils.Constants.MESSAGE_WOMEN
+import utils.Constants.MESSAGE_WOMEN_BRAIN
+import utils.Constants.MESSAGE_WOMEN_COFFEE_1
+import utils.Constants.MESSAGE_WOMEN_COFFEE_2
 import utils.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import utils.Constants.RATING_COOL_DOWN_IN_MINUTES
 import utils.Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
 import utils.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
 import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
+import java.util.*
 
 object MessageHelper {
 
@@ -31,6 +42,23 @@ object MessageHelper {
             chat = message.chat,
             disableNotification = true
         )
+    }
+
+    fun shouldSendLongLiveTheKingSticker(message: ContentMessage<TextedMediaContent>) = when {
+        message.content.text?.lowercase(Locale.US)
+            ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
+        else -> false
+    }
+
+    fun shouldSendWomenGif(message: ContentMessage<TextedMediaContent>) = when {
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
+        else -> false
     }
 
     suspend fun TelegramBot.sendLongLiveTheKingSticker(message: Message) {
