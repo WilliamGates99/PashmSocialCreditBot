@@ -3,14 +3,14 @@ package util
 import dev.inmo.tgbotapi.extensions.api.send.sendMessage
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.extensions.utils.extensions.raw.from
+import dev.inmo.tgbotapi.extensions.utils.extensions.raw.reply_to_message
 import dev.inmo.tgbotapi.types.ReplyParameters
 import dev.inmo.tgbotapi.types.chat.CommonBot
 import dev.inmo.tgbotapi.types.chat.CommonUser
 import dev.inmo.tgbotapi.types.chat.ExtendedBot
 import dev.inmo.tgbotapi.types.message.HTMLParseMode
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
-import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage
-import dev.inmo.tgbotapi.types.message.content.MessageContent
+import dev.inmo.tgbotapi.types.message.abstracts.Message
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
 import util.Constants.COMMAND_SHOW_MY_CREDITS
@@ -20,7 +20,7 @@ import kotlin.random.Random
 @OptIn(RiskFeature::class)
 object CommandHelper {
 
-    suspend fun BehaviourContext.sendXiJinpingTextArt(message: CommonMessage<MessageContent>) {
+    suspend fun BehaviourContext.sendXiJinpingTextArt(message: Message) {
         when (Random.nextBoolean()) {
             true -> {
                 sendMessage(
@@ -69,7 +69,7 @@ object CommandHelper {
         }
     }
 
-    suspend fun BehaviourContext.sendWinnieThePoohTextArt(message: CommonMessage<MessageContent>) {
+    suspend fun BehaviourContext.sendWinnieThePoohTextArt(message: Message) {
         when (Random.nextBoolean()) {
             true -> {
                 sendMessage(
@@ -112,7 +112,7 @@ object CommandHelper {
         }
     }
 
-    suspend fun BehaviourContext.sendNotGroupMessage(message: CommonMessage<MessageContent>) {
+    suspend fun BehaviourContext.sendNotGroupMessage(message: Message) {
         sendMessage(
             text = "\uD83D\uDE44The Social Credit System only works in groups.",
             chat = message.chat,
@@ -121,7 +121,7 @@ object CommandHelper {
     }
 
     suspend fun BehaviourContext.showMyCredits(
-        message: CommonMessage<MessageContent>,
+        message: Message,
         ratingRepository: RatingRepository
     ) {
         message.from?.let { user ->
@@ -141,10 +141,10 @@ object CommandHelper {
     }
 
     suspend fun BehaviourContext.showOthersCredits(
-        message: CommonMessage<MessageContent>,
+        message: Message,
         ratingRepository: RatingRepository
     ) {
-        val repliedUser = message.replyTo?.from
+        val repliedUser = message.reply_to_message?.from
         if (repliedUser == null) {
             sendMessage(
                 text = "⚠\uFE0FReply to someone with /$COMMAND_SHOW_OTHERS_CREDITS to find out their social credits!",
@@ -190,7 +190,7 @@ object CommandHelper {
     }
 
     suspend fun BehaviourContext.showGroupSocialCreditsList(
-        message: CommonMessage<MessageContent>,
+        message: Message,
         ratingRepository: RatingRepository
     ) {
         val stringBuilder = StringBuilder()
