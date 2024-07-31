@@ -1,6 +1,5 @@
 [versions]
 tgbotapi = "15.2.0"
-kotlinTelegramBot = "6.1.0"
 exposedSqlite = "0.52.0"
 sqliteJdbc = "3.44.1.0" # DO NOT UPDATE -> CAUSES "ID IS NOT IN THE RECORD" ISSUE
 kotlinxSerializationJson = "1.7.1"
@@ -13,7 +12,6 @@ kotlin = "2.0.0"
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 # Kotlin Telegram Bot Library
-kotlin-telegram-bot = { module = "io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram", version.ref = "kotlinTelegramBot" } # TODO: REMOVE
 tgbotapi = { module = "dev.inmo:tgbotapi", version.ref = "tgbotapi" }
 tgbotapi-core = { module = "dev.inmo:tgbotapi.core", version.ref = "tgbotapi" }
 tgbotapi-api = { module = "dev.inmo:tgbotapi.api", version.ref = "tgbotapi" }

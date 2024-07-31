@@ -21,7 +21,6 @@ dependencies {
     implementation(libs.tgbotapi.core)
     implementation(libs.tgbotapi.api)
     implementation(libs.tgbotapi.utils)
-    implementation(libs.kotlin.telegram.bot) // TODO: REMOVE
 
     // Ktor Client Library
     implementation(libs.ktor.client.core)
