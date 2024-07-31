@@ -3,30 +3,30 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "2.0.0"
     application
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.xeniac"
-version = "1.6.1"
+version = "2.0.0"
 
 kotlin {
-    jvmToolchain(jdkVersion = 21)
+    jvmToolchain(jdkVersion = 22)
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.json) // Kotlin JSON Serialization Library
+
     // Kotlin Telegram Bot Library
-    implementation(libs.kotlin.telegram.bot)
+    implementation(libs.tgbotapi)
+    implementation(libs.tgbotapi.core)
+    implementation(libs.tgbotapi.api)
+    implementation(libs.tgbotapi.utils)
 
-    // Google Gson Library
-    implementation(libs.gson)
-
-    // Square OkHttp Library
-    implementation(platform(libs.okhttp.bom))
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
-
-    // Square Retrofit Library
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
+    // Ktor Client Library
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp) // Ktor OkHttp Engine
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     // Exposed SQL library
     implementation(libs.exposed.core)
@@ -38,7 +38,7 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "21"
+    kotlinOptions.jvmTarget = "22"
 }
 
 application {
