@@ -49,6 +49,7 @@ fun main(args: Array<String>) {
                 observeGifMessages(scope = this@launch)
                 observeImageMessages(scope = this@launch)
                 observeVideoMessages(scope = this@launch)
+                observeAudioMessages(scope = this@launch)
                 observeVoiceMessages(scope = this@launch)
 
                 observeStickerMessages(
