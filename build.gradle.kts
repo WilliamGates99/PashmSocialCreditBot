@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -7,10 +7,13 @@ plugins {
 }
 
 group = "com.xeniac"
-version = "2.0.0"
+version = "2.0.1"
 
 kotlin {
     jvmToolchain(jdkVersion = 22)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_22)
+    }
 }
 
 dependencies {
@@ -35,10 +38,6 @@ dependencies {
 
     // SQLite JDBC Library
     implementation(libs.sqlite.jdbc)
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "22"
 }
 
 application {
