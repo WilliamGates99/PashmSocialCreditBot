@@ -2,11 +2,11 @@
 tgbotapi = "15.2.0"
 exposedSqlite = "0.52.0"
 sqliteJdbc = "3.44.1.0" # DO NOT UPDATE -> CAUSES "ID IS NOT IN THE RECORD" ISSUE
-kotlinxSerializationJson = "1.7.1"
+kotlinxSerializationJson = "1.7.3"
 ktor = "2.3.12"
 
 # Plugins
-kotlin = "2.0.0"
+kotlin = "2.0.20"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
