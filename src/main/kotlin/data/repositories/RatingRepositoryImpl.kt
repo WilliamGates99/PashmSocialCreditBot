@@ -108,7 +108,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                     this.username = username
                     this.firstName = firstName
                     this.socialCredits = (this.socialCredits + socialCreditsChange).coerceAtLeast(
-                        minimumValue = Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
+                        minimumValue = Constants.SOCIAL_CLASS_EXECUTED
                     )
                     this.modifiedAt = currentTimeInMillis
                     ratingStatus = "updated"
@@ -119,7 +119,7 @@ class RatingRepositoryImpl(dbPath: String) : RatingRepository {
                 this.username = username
                 this.firstName = firstName
                 this.socialCredits = socialCreditsChange.coerceAtLeast(
-                    minimumValue = Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
+                    minimumValue = Constants.SOCIAL_CLASS_EXECUTED
                 )
                 this.createdAt = currentTimeInMillis
                 this.modifiedAt = currentTimeInMillis
