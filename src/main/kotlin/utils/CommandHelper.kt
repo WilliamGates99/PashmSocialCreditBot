@@ -153,40 +153,40 @@ object CommandHelper {
                 disableNotification = true
             )
             return
-        } else {
-            val isReplyingToBot = when (repliedUser) {
-                is ExtendedBot -> true
-                is CommonBot -> true
-                is CommonUser -> false
-            }
-            if (isReplyingToBot) {
-                return
-            }
-
-            val isUserReplyingThemself = message.from?.id == repliedUser.id
-            if (isUserReplyingThemself) {
-                sendMessage(
-                    text = "⚠\uFE0FUse /$COMMAND_SHOW_MY_CREDITS command to find out your social credits!",
-                    chat = message.chat,
-                    replyParameters = ReplyParameters(message = message),
-                    disableNotification = true
-                )
-                return
-            }
-
-            val userRatingInfo = ratingRepository.getUserSocialCredits(
-                groupId = message.chat.id.chatId.long,
-                userId = repliedUser.id.chatId.long
-            )
-            val userSocialCredit = userRatingInfo?.socialCredits ?: 0L
-
-            sendMessage(
-                text = "The Party informs that Comrade *${repliedUser.firstName}* has $userSocialCredit social credits.",
-                chat = message.chat,
-                disableNotification = true,
-                parseMode = MarkdownParseMode
-            )
         }
+
+        val isReplyingToBot = when (repliedUser) {
+            is ExtendedBot -> true
+            is CommonBot -> true
+            is CommonUser -> false
+        }
+        if (isReplyingToBot) {
+            return
+        }
+
+        val isUserReplyingThemself = message.from?.id == repliedUser.id
+        if (isUserReplyingThemself) {
+            sendMessage(
+                text = "⚠\uFE0FUse /$COMMAND_SHOW_MY_CREDITS command to find out your social credits!",
+                chat = message.chat,
+                replyParameters = ReplyParameters(message = message),
+                disableNotification = true
+            )
+            return
+        }
+
+        val userRatingInfo = ratingRepository.getUserSocialCredits(
+            groupId = message.chat.id.chatId.long,
+            userId = repliedUser.id.chatId.long
+        )
+        val userSocialCredit = userRatingInfo?.socialCredits ?: 0L
+
+        sendMessage(
+            text = "The Party informs that Comrade *${repliedUser.firstName}* has $userSocialCredit social credits.",
+            chat = message.chat,
+            disableNotification = true,
+            parseMode = MarkdownParseMode
+        )
     }
 
     suspend fun BehaviourContext.showGroupSocialCreditsList(
