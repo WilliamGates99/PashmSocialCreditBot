@@ -27,10 +27,10 @@ import utils.Constants.MESSAGE_WOMEN
 import utils.Constants.MESSAGE_WOMEN_BRAIN
 import utils.Constants.MESSAGE_WOMEN_COFFEE_1
 import utils.Constants.MESSAGE_WOMEN_COFFEE_2
-import utils.Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE
 import utils.Constants.RATING_COOL_DOWN_IN_MINUTES
-import utils.Constants.SOCIAL_CLASS_CREDIT_NEGATIVE_1000
-import utils.Constants.SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE
+import utils.Constants.SOCIAL_CLASS_EXECUTED
+import utils.Constants.SOCIAL_CLASS_GOOD_CITIZEN
+import utils.Constants.SOCIAL_CLASS_LEADER_LI_RIGHT_HAND
 import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.util.*
 
@@ -45,8 +45,7 @@ object MessageHelper {
     }
 
     fun shouldSendLongLiveTheKingSticker(message: ContentMessage<TextedMediaContent>) = when {
-        message.content.text?.lowercase(Locale.US)
-            ?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
+        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
         message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
         message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
         message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
@@ -173,140 +172,137 @@ object MessageHelper {
             }
 
             val messageSenderStatus = chatMember?.status
-            if (messageSenderStatus != null) {
-                val previousSocialCredits = ratingRepository.getUserSocialCredits(
-                    groupId = groupId,
-                    userId = userId
-                )?.socialCredits ?: 0L
+            if (messageSenderStatus == null) {
+                sendMemberPermissionMessage(message)
+                return
+            }
 
-                val isGivingNegativeCreditToExecutedComrade = previousSocialCredits <= SOCIAL_CLASS_CREDIT_NEGATIVE_1000
-                        && socialCreditsChange < 0
+            val previousSocialCredits = ratingRepository.getUserSocialCredits(
+                groupId = groupId,
+                userId = userId
+            )?.socialCredits ?: 0L
 
-                if (isGivingNegativeCreditToExecutedComrade) {
-                    sendMessage(
-                        text = "\uD83D\uDE35There's no comrade by this name in the party.",
-                        chat = message.chat,
-                        disableNotification = true,
-                        parseMode = MarkdownParseMode
-                    )
-                    return
-                }
-
-                val updateUserSocialCreditsResult = ratingRepository.updateUserSocialCredits(
-                    messageSenderId = messageSender.id.chatId.long,
-                    messageSenderStatus = messageSenderStatus,
-                    groupId = groupId,
-                    groupTitle = groupTitle,
-                    userId = userId,
-                    username = username,
-                    firstName = firstName,
-                    socialCreditsChange = socialCreditsChange
+            val isGivingNegativeCreditToExecutedComrade = previousSocialCredits <= SOCIAL_CLASS_EXECUTED
+                    && socialCreditsChange < 0
+            if (isGivingNegativeCreditToExecutedComrade) {
+                sendMessage(
+                    text = "\uD83D\uDE35There's no comrade by this name in the party.",
+                    chat = message.chat,
+                    disableNotification = true,
+                    parseMode = MarkdownParseMode
                 )
+                return
+            }
 
-                updateUserSocialCreditsResult.onSuccess { userSocialCreditsInfo ->
-                    val currentSocialCredits = userSocialCreditsInfo.socialCredits
-                    val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
-                    val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
+            val updateUserSocialCreditsResult = ratingRepository.updateUserSocialCredits(
+                messageSenderId = messageSender.id.chatId.long,
+                messageSenderStatus = messageSenderStatus,
+                groupId = groupId,
+                groupTitle = groupTitle,
+                userId = userId,
+                username = username,
+                firstName = firstName,
+                socialCreditsChange = socialCreditsChange
+            )
 
-                    val isExecutingComrade = SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE in
-                            currentSocialCredits..<previousSocialCredits
+            updateUserSocialCreditsResult.onSuccess { userSocialCreditsInfo ->
+                val currentSocialCredits = userSocialCreditsInfo.socialCredits
+                val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
+                val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
 
-                    val isRevivingComrade = SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE in
-                            previousSocialCredits..<currentSocialCredits
+                val isExecutingComrade = SOCIAL_CLASS_EXECUTED in currentSocialCredits..<previousSocialCredits
+                val isRevivingComrade = SOCIAL_CLASS_EXECUTED in previousSocialCredits..<currentSocialCredits
 
-                    val messageBuilder = StringBuilder().apply {
-                        when {
-                            currentSocialCredits >= MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_MESSAGE -> {
-                                append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
-                            }
-                            isRevivingComrade -> {
-                                append("\uD83D\uDE2EWow! Comrade *$firstName* is miraculously revived with $currentSocialCredits social credits.")
-                            }
-                            isExecutingComrade -> {
-                                append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
-                                append("\n\n")
-                                append("Enjoy your last meal comrade.\uD83C\uDF46")
-                            }
-                            currentSocialCredits <= SOCIAL_CREDITS_FOR_EXECUTION_MESSAGE -> {
-                                append("Executed comrade *$firstName* has $currentSocialCredits social credits.")
-                            }
-                            currentSocialCredits < 0 -> {
-                                append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
-                            }
-                            else -> {
-                                append("Comrade *$firstName* has $currentSocialCredits social credits.")
-                            }
+                val messageBuilder = StringBuilder().apply {
+                    when {
+                        currentSocialCredits >= SOCIAL_CLASS_GOOD_CITIZEN -> {
+                            append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                         }
-
-                        if (isSendingToUyghurCamp) {
-                            val uyghurJob = Jobs.uyghurCampJobs.random()
-                            append("\n\n")
-                            append("\uD83C\uDFD5The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob.")
-                            append("\n\n")
-                            append("\uD83D\uDC6E\uD83C\uDFFBWorking in the camp will discipline bad citizens.‼\uFE0F")
+                        isRevivingComrade -> {
+                            append("\uD83D\uDE2EWow! Comrade *$firstName* is miraculously revived with $currentSocialCredits social credits.")
                         }
-
-                        if (isReturningFromUyghurCamp) {
-                            append("\n\n\n")
-                            append("\uD83C\uDFE1The party has decided to return comrade from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
+                        isExecutingComrade -> {
+                            append("\uD83D\uDE24The Party has had enough of comrade *$firstName* with $currentSocialCredits social credits. Even the Uyghur camp couldn't discipline this asshole. Comrade *will be executed* at dawn.☠\uFE0F")
+                            append("\n\n")
+                            append("Enjoy your last meal comrade.\uD83C\uDF46")
+                        }
+                        currentSocialCredits <= SOCIAL_CLASS_EXECUTED -> {
+                            append("Executed comrade *$firstName* has $currentSocialCredits social credits.")
+                        }
+                        currentSocialCredits < 0 -> {
+                            append("\uD83D\uDE1EWow! Comrade *$firstName* is disappointing the party with $currentSocialCredits social credits.")
+                        }
+                        else -> {
+                            append("Comrade *$firstName* has $currentSocialCredits social credits.")
                         }
                     }
-
-                    sendMessage(
-                        text = messageBuilder.toString(),
-                        chat = message.chat,
-                        disableNotification = true,
-                        parseMode = MarkdownParseMode
-                    )
 
                     if (isSendingToUyghurCamp) {
-                        sendAnimation(
-                            animation = InputFile.fromId(id = Gifs.POOH_AND_CJ_FILE_ID),
-                            chat = message.chat,
-                            disableNotification = true
-                        )
+                        val uyghurJob = Jobs.uyghurCampJobs.random()
+                        append("\n\n")
+                        append("\uD83C\uDFD5The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob.")
+                        append("\n\n")
+                        append("\uD83D\uDC6E\uD83C\uDFFBWorking in the camp will discipline bad citizens.‼\uFE0F")
                     }
 
-                    if (isExecutingComrade) {
-                        sendAnimation(
-                            animation = InputFile.fromId(id = Gifs.EXECUTION_FILE_ID),
-                            chat = message.chat,
-                            disableNotification = true
-                        )
-                    }
-
-                    if (isRevivingComrade) {
-                        sendAnimation(
-                            animation = InputFile.fromId(id = Gifs.REVIVALE_FILE_ID),
-                            chat = message.chat,
-                            disableNotification = true
-                        )
-                    }
-
-                    if (currentSocialCredits >= Constants.MIN_SOCIAL_CREDITS_FOR_PROUD_PARTY_GIF) {
-                        sendAnimation(
-                            animation = InputFile.fromId(id = Gifs.JOHN_XINA_FILE_ID),
-                            chat = message.chat,
-                            disableNotification = true
-                        )
+                    if (isReturningFromUyghurCamp) {
+                        append("\n\n\n")
+                        append("\uD83C\uDFE1The party has decided to return comrade from the Uyghur camp. Be careful from now on!\uD83D\uDC6E\uD83C\uDFFB\u200D♂\uFE0F")
                     }
                 }
 
-                updateUserSocialCreditsResult.onFailure {
-                    println(it.message)
+                sendMessage(
+                    text = messageBuilder.toString(),
+                    chat = message.chat,
+                    disableNotification = true,
+                    parseMode = MarkdownParseMode
+                )
 
-                    val shouldSendCoolDownMessage = it.message == THROWABLE_MESSAGE_COOL_DOWN
-                    if (shouldSendCoolDownMessage) {
-                        when (messageSenderStatus) {
-                            ChatMember.Status.Creator -> sendCoolDownMessage(message)
-                            ChatMember.Status.Administrator -> sendCoolDownMessage(message)
-                            ChatMember.Status.Member -> sendMemberPermissionMessage(message)
-                            else -> Unit
-                        }
+                if (isSendingToUyghurCamp) {
+                    sendAnimation(
+                        animation = InputFile.fromId(id = Gifs.POOH_AND_CJ_FILE_ID),
+                        chat = message.chat,
+                        disableNotification = true
+                    )
+                }
+
+                if (isExecutingComrade) {
+                    sendAnimation(
+                        animation = InputFile.fromId(id = Gifs.EXECUTION_FILE_ID),
+                        chat = message.chat,
+                        disableNotification = true
+                    )
+                }
+
+                if (isRevivingComrade) {
+                    sendAnimation(
+                        animation = InputFile.fromId(id = Gifs.REVIVALE_FILE_ID),
+                        chat = message.chat,
+                        disableNotification = true
+                    )
+                }
+
+                if (currentSocialCredits >= SOCIAL_CLASS_LEADER_LI_RIGHT_HAND) {
+                    sendAnimation(
+                        animation = InputFile.fromId(id = Gifs.JOHN_XINA_FILE_ID),
+                        chat = message.chat,
+                        disableNotification = true
+                    )
+                }
+            }
+
+            updateUserSocialCreditsResult.onFailure {
+                println(it.message)
+
+                val shouldSendCoolDownMessage = it.message == THROWABLE_MESSAGE_COOL_DOWN
+                if (shouldSendCoolDownMessage) {
+                    when (messageSenderStatus) {
+                        ChatMember.Status.Creator -> sendCoolDownMessage(message)
+                        ChatMember.Status.Administrator -> sendCoolDownMessage(message)
+                        ChatMember.Status.Member -> sendMemberPermissionMessage(message)
+                        else -> Unit
                     }
                 }
-            } else {
-                sendMemberPermissionMessage(message)
             }
         }
     }
