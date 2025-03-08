@@ -1,6 +1,6 @@
 services:
   app:
-    image: williamgates99/pashm-social-credit-bot:2.0.4
+    image: williamgates99/pashm-social-credit-bot:2.0.5
     volumes:
       - ./data:/data/
     restart: always
