@@ -11,6 +11,7 @@ object Constants {
 
     internal const val COMMAND_SEND_TEXT_ART_XI_JINPING = "xi"
     internal const val COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH = "pooh"
+    internal const val COMMAND_SEND_TEXT_ART_HAPPY_MERCHANT = "happymerchant"
     internal const val COMMAND_SHOW_COMRADES_RANK = "comradesrank"
     internal const val COMMAND_SHOW_MY_CREDITS = "mycredits"
     internal const val COMMAND_SHOW_OTHERS_CREDITS = "credits"
