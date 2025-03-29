@@ -8,6 +8,7 @@ import dev.inmo.tgbotapi.types.chat.PrivateChatImpl
 import dev.inmo.tgbotapi.types.chat.SupergroupChatImpl
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
+import utils.CommandHelper.sendHappyMerchantTextArt
 import utils.CommandHelper.sendNotGroupMessage
 import utils.CommandHelper.sendWinnieThePoohTextArt
 import utils.CommandHelper.sendXiJinpingTextArt
@@ -26,6 +27,10 @@ suspend fun BehaviourContext.observerCommands(
 
     onCommand(command = Constants.COMMAND_SEND_TEXT_ART_WINNIE_THE_POOH) { message ->
         sendWinnieThePoohTextArt(message)
+    }
+
+    onCommand(command = Constants.COMMAND_SEND_TEXT_ART_HAPPY_MERCHANT) { message ->
+        sendHappyMerchantTextArt(message)
     }
 
     onCommand(command = Constants.COMMAND_SHOW_MY_CREDITS) { message ->
