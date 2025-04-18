@@ -266,7 +266,7 @@ object CommandHelper {
                 stringBuilder.apply {
                     userSocialCreditsInfo.apply {
                         val socialClass = SocialClass.getComradeSocialClass(socialCredits)
-                        append("${index + 1}. $firstName ― $socialClass: $socialCredits credits")
+                        append("${index + 1}.\u200E $firstName ― $socialClass: $socialCredits credits")
                     }
 
                     if (index == groupSocialCreditsList.lastIndex) {
