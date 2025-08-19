@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.xeniac"
-version = "2.0.10"
+version = "2.0.11"
 
 kotlin {
     jvmToolchain(jdkVersion = 23)
