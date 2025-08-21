@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.xeniac"
-version = "2.0.11"
+version = "2.1.0"
 
 kotlin {
     jvmToolchain(jdkVersion = 23)
@@ -17,7 +17,8 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.kotlinx.serialization.json) // Kotlin JSON Serialization Library
+    // Kotlin JSON Serialization Library
+    implementation(libs.kotlinx.serialization.json)
 
     // Kotlin Telegram Bot Library
     implementation(libs.bundles.telegram)
@@ -28,8 +29,11 @@ dependencies {
     // Exposed SQL library
     implementation(libs.bundles.exposed)
 
+    // PostgreSQL Library
+    implementation(libs.postgresql)
+
     // SQLite JDBC Library
-    implementation(libs.sqlite.jdbc)
+    // implementation(libs.sqlite.jdbc)
 }
 
 application {

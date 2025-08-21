@@ -7,35 +7,40 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import message_observers.*
-import utils.PropertiesHelper
+import utils.EnvironmentVariables
 import java.net.Authenticator
 import java.net.PasswordAuthentication
 import java.util.*
 
-fun main(args: Array<String>) {
-    val propertiesHelper = PropertiesHelper(propertiesFilePath = args[0])
-    val ratingRepository: RatingRepository = RatingRepositoryImpl(dbPath = propertiesHelper.getDbPath())
+fun main() {
+    val ratingRepository: RatingRepository = RatingRepositoryImpl(
+        dbUrl = EnvironmentVariables.getDbUrl(),
+        dbUser = EnvironmentVariables.getDbUsername(),
+        dbPassword = EnvironmentVariables.getDbPassword()
+    )
 
     val telegramBot = telegramBot(
-        token = propertiesHelper.getBotToken()
+        token = EnvironmentVariables.getBotToken()
     ) {
-        Authenticator.setDefault(object : Authenticator() {
-            override fun getPasswordAuthentication(): PasswordAuthentication? {
-                val isRequestSentToProxy = requestingHost.lowercase(
-                    Locale.US
-                ) == propertiesHelper.getProxyHost().lowercase(Locale.US)
+        Authenticator.setDefault(
+            object : Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication? {
+                    val isRequestSentToProxy = requestingHost.lowercase(
+                        Locale.US
+                    ) == EnvironmentVariables.getProxyHost().lowercase(Locale.US)
 
-                return if (isRequestSentToProxy) PasswordAuthentication(
-                    /* userName = */ propertiesHelper.getProxyUsername(),
-                    /* password = */ propertiesHelper.getProxyPassword().toCharArray()
-                ) else null
+                    return if (isRequestSentToProxy) PasswordAuthentication(
+                        /* userName = */ EnvironmentVariables.getProxyUsername(),
+                        /* password = */ EnvironmentVariables.getProxyPassword().toCharArray()
+                    ) else null
+                }
             }
-        })
+        )
 
         engine {
             proxy = ProxyBuilder.socks(
-                host = propertiesHelper.getProxyHost(),
-                port = propertiesHelper.getProxyPort().toInt()
+                host = EnvironmentVariables.getProxyHost(),
+                port = EnvironmentVariables.getProxyPort().toInt()
             )
         }
     }
