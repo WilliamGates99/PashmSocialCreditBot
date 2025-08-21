@@ -31,9 +31,6 @@ dependencies {
 
     // PostgreSQL Library
     implementation(libs.postgresql)
-
-    // SQLite JDBC Library
-    // implementation(libs.sqlite.jdbc)
 }
 
 application {
