@@ -31,9 +31,6 @@ class RatingRepositoryImpl(
             user = dbUser,
             password = dbPassword
         )
-
-        // Local SQLite
-        // Database.connect(url = "jdbc:sqlite:$dbUrl")
     }
 
     override fun createDbSchemas() {
