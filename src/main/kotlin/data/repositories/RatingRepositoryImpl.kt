@@ -13,11 +13,27 @@ import utils.Constants
 import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
 
-class RatingRepositoryImpl(dbPath: String) : RatingRepository {
+class RatingRepositoryImpl(
+    private val dbUrl: String,
+    private val dbUser: String,
+    private val dbPassword: String
+) : RatingRepository {
 
     init {
-        Database.connect(url = "jdbc:sqlite:$dbPath")
+        initDatabase()
+        createDbSchemas()
+    }
 
+    override fun initDatabase() {
+        Database.connect(
+            url = dbUrl,
+            driver = "org.postgresql.Driver",
+            user = dbUser,
+            password = dbPassword
+        )
+    }
+
+    override fun createDbSchemas() {
         transaction {
             addLogger(StdOutSqlLogger)
             SchemaUtils.create(UsersSocialCreditsTable)

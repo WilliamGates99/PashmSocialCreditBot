@@ -252,7 +252,7 @@ object CommandHelper {
         )
 
         if (groupSocialCreditsList.isEmpty()) {
-            stringBuilder.append("Every comrade has 0 social credits. Be careful, *great Leader Xi* is watching over you!")
+            stringBuilder.append("Every comrade has 0 social credits. Be careful, <b>great Leader Xi</b> is watching over you!")
         } else {
             stringBuilder.apply {
                 append("<i>\uD83D\uDCE3Comrades, listen carefully!</i>")

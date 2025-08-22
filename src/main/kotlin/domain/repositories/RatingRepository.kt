@@ -5,6 +5,10 @@ import domain.model.UserSocialCreditsInfo
 
 interface RatingRepository {
 
+    fun initDatabase()
+
+    fun createDbSchemas()
+
     fun getGroupSocialCreditsList(groupId: Long): List<UserSocialCreditsInfo>
 
     fun getUserSocialCredits(
