@@ -12,60 +12,29 @@ import dev.inmo.tgbotapi.types.message.HTMLParseMode
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.Message
 import dev.inmo.tgbotapi.utils.RiskFeature
+import domain.model.Command
+import domain.model.TextArtMessage
 import domain.repositories.RatingRepository
-import utils.Constants.COMMAND_SHOW_MY_CREDITS
-import utils.Constants.COMMAND_SHOW_OTHERS_CREDITS
+import domain.utils.getComradeSocialClass
 import kotlin.random.Random
 
 @OptIn(RiskFeature::class)
 object CommandHelper {
 
-    suspend fun BehaviourContext.sendXiJinpingTextArt(message: Message) {
+    suspend fun BehaviourContext.sendXiJinpingTextArt(
+        message: Message
+    ) {
         when (Random.nextBoolean()) {
             true -> {
                 sendMessage(
-                    text = """
-                        ⣿⣿⠟⠋⠄⠄⠄⠄⠄⠄⠄⢁⠈⢻⢿⣿⣿⣿⣿⣿
-                        ⣿⣿⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⡀⠭⢿⣿⣿
-                        ⣿⡟⠄⢀⣾⣿⣿⣿⣷⣶⣿⣷⣶⣶⡆⠄⠄⠄⣿⣿
-                        ⣿⡇⢀⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠄⠄⢸⣿⣿
-                        ⣿⣇⣼⣿⣿⠿⠶⠙⣿⡟⠡⣴⣿⣽⣿⣧⠄⢸⣿⣿
-                        ⣿⣿⣾⣿⣿⣟⣭⣾⣿⣷⣶⣶⣴⣶⣿⣿⢄⣿⣿⣿
-                        ⣿⣿⣿⣿⣿⡟⣩⣿⣿⣿⡏⢻⣿⣿⣿⣿⣿⣿⣿⣿
-                        ⣿⣿⣿⣹⡋⠘⠷⣦⣀⣠⡶⠁⠈⠋⠄⣿⣿⣿⣿⣿
-                        ⣿⣿⣿⣍⠃⣴⣶⡔⠒⠄⣠⢀⠄⠄⠄⡨⣿⣿⣿⣿
-                        ⣿⣿⣿⣿⣦⡘⠿⣷⣿⠿⠟⠃⠄⠄⣠⡇⠈⠻⣿⣿
-                        ⣿⡿⠟⠋⢁⣷⣠⠄⠄⠄⠄⣀⣠⣾⡟⠄⠄⠄⠄⠉
-                        ⠁⠄⠄⠄⢸⣿⣿⡯⢓⣴⣾⣿⣿⡟⠄⠄⠄⠄⠄⠄
-                        ⠄⠄⠄⠄⣿⡟⣷⠄⠹⣿⣿⣿⡿⠁⠄⠄⠄⠄⠄⠄
-                        ⠄⠄⠄⣸⣿⡷⡇⠄⣴⣾⣿⣿⠃⠄⠄⠄⠄⠄⠄⠄
-                        ⠄⠄⠄⣿⣿⠃⣦⣄⣿⣿⣿⠇⠄⠄⠄⠄⠄⠄⠄⠄
-                        ⠄⠄⢸⣿⠗⢈⡶⣷⣿⣿⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄
-                    """.trimIndent(),
+                    text = TextArtMessage.XI_JINPING.textArtFilled,
                     chat = message.chat,
                     disableNotification = true
                 )
             }
             false -> {
                 sendMessage(
-                    text = """
-                        ⠀⠀⣠⣴⣻⣻⣻⣻⣻⣻⣻⡾⣷⡄⡀⠀⠀⠀⠀⠀
-                        ⠀⠀⣼⣻⣻⣻⣻⣻⣻⣻⣻⣻⣻⣻⣷⢿⣒⡀⠀⠀
-                        ⠀⢠⣻⡿⠁⠀⠀⠀⠈⠉⠀⠈⠉⠉⢹⣻⣻⣻⠀⠀
-                        ⠀⢸⡿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣻⣻⡇⠀⠀
-                        ⠀⠸⠃⠀⠀⣀⣉⣦⠀⢠⣞⠋⠀⠂⠀⠘⣻⡇⠀⠀
-                        ⠀⠀⠁⠀⠀⠠⠒⠁⠀⠈⠉⠉⠋⠉⠀⠀⡻⠀⠀⠀
-                        ⠀⠀⠀⠀⠀⢠⠖⠀⠀⠀⢰⡄⠀⠀⠀⠀⠀⠀⠀⠀
-                        ⠀⠀⠀⠆⢴⣧⣈⠙⠿⠟⢉⣾⣷⣴⣻⠀⠀⠀⠀⠀
-                        ⠀⠀⠀⠲⣼⠋⠉⢫⣭⣻⠟⡿⣻⣻⣻⢗⠀⠀⠀⠀
-                        ⠀⠀⠀⠀⠙⢧⣀⠈⠀⣀⣠⣼⣻⣻⠟⢸⣷⣄⠀⠀
-                        ⠀⢀⣠⣴⡾⠈⠟⣻⣻⣻⣻⠿⠟⠁⢠⣻⣻⣻⣻⣶
-                        ⣾⣻⣻⣻⡇⠀⠀⢐⡬⠋⠁⠀⠀⢠⣻⣻⣻⣻⣻⣻
-                        ⣻⣻⣻⣻⠀⢠⠈⣻⣆⠀⠀⠀⢀⣾⣻⣻⣻⣻⣻⣻
-                        ⣻⣻⣻⠇⠀⢈⢸⣻⠋⠁⠀⠀⣼⣻⣻⣻⣻⣻⣻⣻
-                        ⣻⣻⣻⠀⠀⣼⠙⠻⠀⠀⠀⣸⣻⣻⣻⣻⣻⣻⣻⣻
-                        ⣻⣻⡇⠀⣨⡷⢉⠈⠀⠀⢰⣻⣻⣻⣻⣻⣻⣻⣻⣻
-                    """.trimIndent(),
+                    text = TextArtMessage.XI_JINPING.textArtOutlined,
                     chat = message.chat,
                     disableNotification = true
                 )
@@ -73,46 +42,20 @@ object CommandHelper {
         }
     }
 
-    suspend fun BehaviourContext.sendWinnieThePoohTextArt(message: Message) {
+    suspend fun BehaviourContext.sendWinnieThePoohTextArt(
+        message: Message
+    ) {
         when (Random.nextBoolean()) {
             true -> {
                 sendMessage(
-                    text = """
-                        ⣿⢟⣛⣛⣛⠿⣿⣿⡿⠿⠿⠿⠿⢿⣿⡟⣵⣶⣮⠻⣿
-                        ⡏⣿⣿⣿⣿⢗⣨⣵⣶⣿⣿⣿⣿⣶⣮⠁⣿⣿⣿⡇⣿
-                        ⣿⣬⣛⢛⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢿⣿⣿⢇⣿
-                        ⣿⡿⣣⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⢿⣿
-                        ⣿⡸⢫⣽⣿⣯⣻⣿⣿⣿⣿⣿⣶⣹⣿⣿⣿⣿⣿⣾⣿
-                        ⣿⡷⣹⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-                        ⢏⣾⣿⣿⢈⣩⡥⣿⣯⣭⣛⣿⣸⣿⣿⣿⣿⣿⣯⢸⣿
-                        ⢸⣿⣿⣿⣿⡁⠀⠀⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
-                        ⣇⢻⣿⣛⢿⣷⣶⣶⣿⣿⣿⣿⣝⣛⣿⣿⣿⣿⡿⠨⡻
-                        ⢟⡤⡻⣿⣮⡻⣿⣿⣿⣿⡿⣫⣾⣿⣿⣿⡿⢟⣣⢞⢡
-                        ⣜⢷⣕⠜⣿⣿⣷⣶⣶⣶⣿⡿⠟⣛⣭⣴⣾⠿⣛⣭⣾
-                        ⣿⣷⣶⣍⢒⣯⣝⡻⢟⣫⣵⣾⣿⡿⢟⣭⣶⣿⣿⣿⣿
-                        ⣿⣿⣿⣿⣷⣝⡻⠷⠿⠿⣟⣋⣥⣾⣿⣿⣿⣿⣿⣿⣿
-                    """.trimIndent(),
+                    text = TextArtMessage.WINNIE_THE_POOH.textArtFilled,
                     chat = message.chat,
                     disableNotification = true
                 )
             }
             false -> {
                 sendMessage(
-                    text = """
-                        ⠀⡠⠤⠤⠤⣀⠀⠀⢀⣀⣀⣀⣀⡀⠀⢠⠊⠉⠑⣄⠀
-                        ⢰⠀⠀⠀⠀⡨⠗⠊⠉⠀⠀⠀⠀⠉⠑⣾⠀⠀⠀⢸⠀
-                        ⠀⠓⠤⡤⠊⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡀⠀⠀⡸⠀
-                        ⠀⢀⠜⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡀⠀
-                        ⠀⢇⡔⠂⠀⠐⠄⠀⠀⠀⠀⠀⠉⠆⠀⠀⠀⠀⠀⠁⠀
-                        ⠀⢈⠆⠀⠀⠀⠈⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                        ⡰⠁⠀⠀⡷⠖⢚⠀⠐⠒⠤⠀⠇⠀⠀⠀⠀⠀⠐⡇⠀
-                        ⡇⠀⠀⠀⠀⢾⣿⣿⡆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                        ⠸⡄⠀⠤⡀⠈⠉⠉⠀⠀⠀⠀⠢⠤⠀⠀⠀⠀⢀⣗⢄
-                        ⡠⢛⢄⠀⠑⢄⠀⠀⠀⠀⢀⠔⠁⠀⠀⠀⢀⡠⠜⡡⡞
-                        ⠣⡈⠪⣣⠀⠀⠈⠉⠉⠉⠀⢀⣠⠤⠒⠋⠁⣀⠤⠒⠁
-                        ⠀⠈⠉⠲⡭⠐⠢⢄⡠⠔⠊⠁⠀⢀⡠⠒⠉⠀⠀⠀⠀
-                        ⠀⠀⠀⠀⠈⠢⢄⣈⣀⣀⠠⠴⠚⠁⠀⠀⠀⠀⠀⠀⠀
-                    """.trimIndent(),
+                    text = TextArtMessage.WINNIE_THE_POOH.textArtOutlined,
                     chat = message.chat,
                     disableNotification = true
                 )
@@ -120,44 +63,20 @@ object CommandHelper {
         }
     }
 
-    suspend fun BehaviourContext.sendHappyMerchantTextArt(message: Message) {
+    suspend fun BehaviourContext.sendHappyMerchantTextArt(
+        message: Message
+    ) {
         when (Random.nextBoolean()) {
             true -> {
                 sendMessage(
-                    text = """
-                        ⣿⣿⣿⣿⣿⣿⣿⣿⠟⠉⠅⣀⣄⡉⠈⠘⢿⣿⣿⣿
-                        ⣿⣿⣿⣿⣿⣿⣿⠃⠀⠰⣿⣿⣿⣿⣿⣷⣶⢙⣿⣿
-                        ⣿⣿⣿⡿⠿⠟⠉⠀⠀⠀⠉⣽⠟⠛⠻⣿⣿⣷⠹⣿
-                        ⣿⣿⢋⣴⣦⡡⡄⣤⣤⠀⣸⣿⠐⠁⠀⢠⣤⠀⠀⣾
-                        ⣿⡏⣾⣿⣿⣇⠃⢻⣿⠀⠿⠿⣿⣾⣿⡿⠿⣷⣌⢻
-                        ⡟⢠⡍⣿⣿⣿⡄⠄⠁⠀⠀⠀⠉⠉⠁⠰⠷⣬⣿⣾
-                        ⡇⢿⡇⣿⣿⣿⣷⢻⠀⠀⠀⠀⠀⠀⠒⠖⠒⣀⣤⣥
-                        ⠇⣾⣇⣿⣿⣿⣿⡌⠀⠀⠀⠀⠀⠀⠢⠄⠀⠟⢿⣿
-                        ⣴⣿⣿⠸⣿⣿⣿⣿⡄⠀⠀⠀⠀⠀⠀⢠⡖⠁⡙⢻
-                        ⣿⣿⣿⣇⢽⣿⣿⣿⢟⡈⣂⣂⣠⣤⠲⣿⣿⡶⠇⠀
-                        ⣿⣿⣿⣿⣏⢿⣿⣿⣿⣸⣿⣿⣿⡿⢀⡃⠀⠠⡘⣰
-                        ⣿⣿⣿⣿⣿⣧⣙⠿⠿⠿⢿⣛⣥⣾⣿⣿⣿⣿⣿⣿
-                    """.trimIndent(),
+                    text = TextArtMessage.HAPPY_MERCHANT.textArtFilled,
                     chat = message.chat,
                     disableNotification = true
                 )
             }
             false -> {
                 sendMessage(
-                    text = """
-                        ⠀⠀⠀⠀⠀⠀⠀⠀⣠⣶⣺⠿⠻⢶⣷⣧⡀⠀⠀⠀
-                        ⠀⠀⠀⠀⠀⠀⠀⣼⣿⣏⠀⠀⠀⠀⠀⠈⠉⡦⠀⠀
-                        ⠀⠀⠀⢀⣀⣠⣶⣿⣿⣿⣶⠂⣠⣤⣄⠀⠀⠈⣆⠀
-                        ⠀⠀⡴⠋⠙⢞⢻⠛⠛⣿⠇⠀⣯⣾⣿⡟⠛⣿⣿⠁
-                        ⠀⢰⠁⠀⠀⠸⣼⡄⠀⣿⣀⣀⠀⠁⠀⢀⣀⠈⠳⡄
-                        ⢠⡟⢲⠀⠀⠀⢻⣻⣾⣿⣿⣿⣶⣶⣾⣏⣈⠓⠀⠁
-                        ⢸⡀⢸⠀⠀⠀⠈⡄⣿⣿⣿⣿⣿⣿⣭⣩⣭⠿⠛⠚
-                        ⣸⠁⠸⠀⠀⠀⠀⢳⣿⣿⣿⣿⣿⣿⣝⣻⣿⣠⡀⠀
-                        ⠋⠀⠀⣇⠀⠀⠀⠀⢻⣿⣿⣿⣿⣿⣿⡟⢩⣾⢦⡄
-                        ⠀⠀⠀⠸⡂⠀⠀⠀⡠⢷⠽⠽⠟⠛⣍⠀⠀⢉⣸⣿
-                        ⠀⠀⠀⠀⠰⡀⠀⠀⠀⠇⠀⠀⠀⢀⡿⢼⣿⣟⢧⠏
-                        ⠀⠀⠀⠀⠀⠘⠦⣀⣀⣀⡀⠤⠚⠁⠀⠀⠀⠀⠀⠀
-                    """.trimIndent(),
+                    text = TextArtMessage.HAPPY_MERCHANT.textArtOutlined,
                     chat = message.chat,
                     disableNotification = true
                 )
@@ -165,7 +84,9 @@ object CommandHelper {
         }
     }
 
-    suspend fun BehaviourContext.sendNotGroupMessage(message: Message) {
+    suspend fun BehaviourContext.sendNotGroupMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "\uD83D\uDE44The Social Credit System only works in groups.",
             chat = message.chat,
@@ -200,7 +121,7 @@ object CommandHelper {
         val repliedUser = message.reply_to_message?.from
         if (repliedUser == null) {
             sendMessage(
-                text = "⚠\uFE0FReply to someone with /$COMMAND_SHOW_OTHERS_CREDITS to find out their social credits!",
+                text = "⚠\uFE0FReply to someone with /${Command.SHOW_OTHERS_CREDITS.command} to find out their social credits!",
                 chat = message.chat,
                 replyParameters = ReplyParameters(message = message),
                 disableNotification = true
@@ -220,7 +141,7 @@ object CommandHelper {
         val isUserReplyingThemself = message.from?.id == repliedUser.id
         if (isUserReplyingThemself) {
             sendMessage(
-                text = "⚠\uFE0FUse /$COMMAND_SHOW_MY_CREDITS command to find out your social credits!",
+                text = "⚠\uFE0FUse /${Command.SHOW_MY_CREDITS.command} command to find out your social credits!",
                 chat = message.chat,
                 replyParameters = ReplyParameters(message = message),
                 disableNotification = true
@@ -264,8 +185,8 @@ object CommandHelper {
 
             groupSocialCreditsList.forEachIndexed { index, userSocialCreditsInfo ->
                 stringBuilder.apply {
-                    userSocialCreditsInfo.apply {
-                        val socialClass = SocialClass.getComradeSocialClass(socialCredits)
+                    with(userSocialCreditsInfo) {
+                        val socialClass = getComradeSocialClass(socialCredits)
                         append("${index + 1}.\u200E $firstName ― $socialClass: $socialCredits credits")
                     }
 

@@ -10,6 +10,7 @@ import dev.inmo.tgbotapi.extensions.utils.shortcuts.stickerMessages
 import dev.inmo.tgbotapi.types.chat.*
 import dev.inmo.tgbotapi.utils.RiskFeature
 import domain.repositories.RatingRepository
+import domain.utils.getSocialCreditChange
 import kotlinx.coroutines.CoroutineScope
 import utils.MessageHelper.sendCreditingBotProhibitionMessage
 import utils.MessageHelper.sendCreditingSocialCreditBotProhibitionMessage
@@ -17,7 +18,6 @@ import utils.MessageHelper.sendCreditingYourselfProhibitionMessage
 import utils.MessageHelper.sendNotGroupMessage
 import utils.MessageHelper.sendUpdateUserSocialCreditResultMessage
 import utils.MessageHelper.sendZeroChangeTrollMessage
-import utils.Stickers.getSocialCreditChange
 
 @OptIn(RiskFeature::class)
 fun BehaviourContext.observeStickerMessages(
@@ -25,7 +25,9 @@ fun BehaviourContext.observeStickerMessages(
     ratingRepository: RatingRepository,
     scope: CoroutineScope
 ) {
-    stickerMessages().subscribe(scope = scope) { sticker ->
+    stickerMessages().subscribe(
+        scope = scope
+    ) { sticker ->
         when (sticker.chat) {
             is PrivateChatImpl -> println("Sticker Content = ${sticker.content}")
             else -> Unit
@@ -41,10 +43,10 @@ fun BehaviourContext.observeStickerMessages(
         val isUserReplyingThemself = sticker.from?.id == sticker.reply_to_message?.from?.id
         if (isUserReplyingThemself) {
             when (sticker.chat) {
-                is GroupChatImpl -> sendCreditingYourselfProhibitionMessage(sticker)
-                is SupergroupChatImpl -> sendCreditingYourselfProhibitionMessage(sticker)
-                is ForumChatImpl -> sendCreditingYourselfProhibitionMessage(sticker)
-                is PrivateChatImpl -> sendNotGroupMessage(sticker)
+                is GroupChatImpl -> sendCreditingYourselfProhibitionMessage(message = sticker)
+                is SupergroupChatImpl -> sendCreditingYourselfProhibitionMessage(message = sticker)
+                is ForumChatImpl -> sendCreditingYourselfProhibitionMessage(message = sticker)
+                is PrivateChatImpl -> sendNotGroupMessage(message = sticker)
                 else -> Unit
             }
             return@subscribe
@@ -55,10 +57,10 @@ fun BehaviourContext.observeStickerMessages(
             ?.from?.username == botUser.username
         if (isUserReplyingToSocialCreditBot) {
             when (sticker.chat) {
-                is GroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(sticker)
-                is SupergroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(sticker)
-                is ForumChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(sticker)
-                is PrivateChatImpl -> sendNotGroupMessage(sticker)
+                is GroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(message = sticker)
+                is SupergroupChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(message = sticker)
+                is ForumChatImpl -> sendCreditingSocialCreditBotProhibitionMessage(message = sticker)
+                is PrivateChatImpl -> sendNotGroupMessage(message = sticker)
                 else -> Unit
             }
             return@subscribe
@@ -71,10 +73,10 @@ fun BehaviourContext.observeStickerMessages(
         }
         if (isReplyingToBot) {
             when (sticker.chat) {
-                is GroupChatImpl -> sendCreditingBotProhibitionMessage(sticker)
-                is SupergroupChatImpl -> sendCreditingBotProhibitionMessage(sticker)
-                is ForumChatImpl -> sendCreditingBotProhibitionMessage(sticker)
-                is PrivateChatImpl -> sendNotGroupMessage(sticker)
+                is GroupChatImpl -> sendCreditingBotProhibitionMessage(message = sticker)
+                is SupergroupChatImpl -> sendCreditingBotProhibitionMessage(message = sticker)
+                is ForumChatImpl -> sendCreditingBotProhibitionMessage(message = sticker)
+                is PrivateChatImpl -> sendNotGroupMessage(message = sticker)
                 else -> Unit
             }
             return@subscribe
@@ -82,34 +84,34 @@ fun BehaviourContext.observeStickerMessages(
 
         if (socialCreditsChange == 0L) {
             when (sticker.chat) {
-                is GroupChatImpl -> sendZeroChangeTrollMessage(sticker)
-                is SupergroupChatImpl -> sendZeroChangeTrollMessage(sticker)
-                is ForumChatImpl -> sendZeroChangeTrollMessage(sticker)
-                is PrivateChatImpl -> sendNotGroupMessage(sticker)
-                else -> Unit
-            }
-            return@subscribe
-        } else {
-            when (sticker.chat) {
-                is GroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
-                    message = sticker,
-                    socialCreditsChange = socialCreditsChange,
-                    ratingRepository = ratingRepository
-                )
-                is SupergroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
-                    message = sticker,
-                    socialCreditsChange = socialCreditsChange,
-                    ratingRepository = ratingRepository
-                )
-                is ForumChatImpl -> sendUpdateUserSocialCreditResultMessage(
-                    message = sticker,
-                    socialCreditsChange = socialCreditsChange,
-                    ratingRepository = ratingRepository
-                )
-                is PrivateChatImpl -> sendNotGroupMessage(sticker)
+                is GroupChatImpl -> sendZeroChangeTrollMessage(message = sticker)
+                is SupergroupChatImpl -> sendZeroChangeTrollMessage(message = sticker)
+                is ForumChatImpl -> sendZeroChangeTrollMessage(message = sticker)
+                is PrivateChatImpl -> sendNotGroupMessage(message = sticker)
                 else -> Unit
             }
             return@subscribe
         }
+
+        when (sticker.chat) {
+            is GroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                message = sticker,
+                socialCreditsChange = socialCreditsChange,
+                ratingRepository = ratingRepository
+            )
+            is SupergroupChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                message = sticker,
+                socialCreditsChange = socialCreditsChange,
+                ratingRepository = ratingRepository
+            )
+            is ForumChatImpl -> sendUpdateUserSocialCreditResultMessage(
+                message = sticker,
+                socialCreditsChange = socialCreditsChange,
+                ratingRepository = ratingRepository
+            )
+            is PrivateChatImpl -> sendNotGroupMessage(sticker)
+            else -> Unit
+        }
+        return@subscribe
     }
 }
