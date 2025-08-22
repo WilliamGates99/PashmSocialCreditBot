@@ -29,7 +29,7 @@ dependencies {
     // Exposed SQL library
     implementation(libs.bundles.exposed)
 
-    // PostgreSQL Library
+    // PostgreSQL Driver Library
     implementation(libs.postgresql)
 }
 
