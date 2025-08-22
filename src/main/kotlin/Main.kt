@@ -54,7 +54,7 @@ fun main() {
     embeddedServer(
         factory = Netty,
         port = EnvironmentVariables.getRenderPort(),
-        host = "0.0.0."
+        host = "0.0.0.0"
     ) {
         routing {
             get(path = "/health") {

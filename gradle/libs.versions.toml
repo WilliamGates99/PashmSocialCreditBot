@@ -4,6 +4,7 @@ tgbotapi = "28.0.0"
 ktor = "3.2.3"
 exposedSqlite = "0.61.0"
 postgresql = "42.7.7"
+logbackClassic = "1.5.18"
 
 # Plugins
 kotlin = "2.1.20"
@@ -35,6 +36,8 @@ exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "e
 # PostgreSQL Driver Library
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 
+# Logback Classic Library for SLF4J
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logbackClassic" }
 
 [bundles]
 telegram = ["tgbotapi", "tgbotapi-core", "tgbotapi-api", "tgbotapi-utils"]

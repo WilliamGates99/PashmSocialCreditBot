@@ -31,6 +31,9 @@ dependencies {
 
     // PostgreSQL Driver Library
     implementation(libs.postgresql)
+
+    // Logback Classic Library for SLF4J
+    implementation(libs.logback.classic)
 }
 
 application {
