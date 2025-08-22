@@ -9,7 +9,10 @@ interface RatingRepository {
 
     fun createDbSchemas()
 
-    fun getGroupSocialCreditsList(groupId: Long): List<UserSocialCreditsInfo>
+    fun getGroupSocialCreditsList(
+        groupId: Long,
+        maxRows: Int = 50
+    ): List<UserSocialCreditsInfo>
 
     fun getUserSocialCredits(
         groupId: Long,

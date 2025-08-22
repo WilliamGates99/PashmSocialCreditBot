@@ -1,4 +1,4 @@
 services:
   app:
-    image: williamgates99/pashm-social-credit-bot:2.1.0
+    image: williamgates99/pashm-social-credit-bot:2.1.1
     restart: always

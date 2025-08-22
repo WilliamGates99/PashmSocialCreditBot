@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.xeniac"
-version = "2.1.0"
+version = "2.1.1"
 
 kotlin {
     jvmToolchain(jdkVersion = 23)
@@ -29,8 +29,11 @@ dependencies {
     // Exposed SQL library
     implementation(libs.bundles.exposed)
 
-    // PostgreSQL Library
+    // PostgreSQL Driver Library
     implementation(libs.postgresql)
+
+    // Logback Classic Library for SLF4J
+    implementation(libs.logback.classic)
 }
 
 application {

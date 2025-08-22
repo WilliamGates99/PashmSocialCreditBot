@@ -19,27 +19,29 @@ import utils.MessageHelper.shouldSendWomenGif
 fun BehaviourContext.observeGifMessages(
     scope: CoroutineScope
 ) {
-    animationMessages().subscribe(scope = scope) { message ->
+    animationMessages().subscribe(
+        scope = scope
+    ) { message ->
         when (message.chat) {
             is PrivateChatImpl -> println("Gif Animation = ${message.animation}")
             else -> Unit
         }
 
-        if (shouldSendLongLiveTheKingSticker(message)) {
+        if (shouldSendLongLiveTheKingSticker(message = message)) {
             when (message.chat) {
-                is GroupChatImpl -> sendLongLiveTheKingSticker(message)
-                is SupergroupChatImpl -> sendLongLiveTheKingSticker(message)
-                is ForumChatImpl -> sendLongLiveTheKingSticker(message)
+                is GroupChatImpl -> sendLongLiveTheKingSticker(message = message)
+                is SupergroupChatImpl -> sendLongLiveTheKingSticker(message = message)
+                is ForumChatImpl -> sendLongLiveTheKingSticker(message = message)
                 else -> Unit
             }
             return@subscribe
         }
 
-        if (shouldSendWomenGif(message)) {
+        if (shouldSendWomenGif(message = message)) {
             when (message.chat) {
-                is GroupChatImpl -> sendWomenGif(message)
-                is SupergroupChatImpl -> sendWomenGif(message)
-                is ForumChatImpl -> sendWomenGif(message)
+                is GroupChatImpl -> sendWomenGif(message = message)
+                is SupergroupChatImpl -> sendWomenGif(message = message)
+                is ForumChatImpl -> sendWomenGif(message = message)
                 else -> Unit
             }
             return@subscribe

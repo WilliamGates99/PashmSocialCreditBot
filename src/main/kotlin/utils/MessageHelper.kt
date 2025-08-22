@@ -16,69 +16,73 @@ import dev.inmo.tgbotapi.types.chat.member.ChatMember
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import dev.inmo.tgbotapi.types.message.abstracts.ContentMessage
 import dev.inmo.tgbotapi.types.message.abstracts.Message
-import dev.inmo.tgbotapi.types.message.content.TextedMediaContent
+import dev.inmo.tgbotapi.types.message.content.TextedContent
 import dev.inmo.tgbotapi.utils.RiskFeature
+import domain.model.GifMessage
+import domain.model.SocialClass
+import domain.model.StickerMessage
+import domain.model.UyghurCampJob
 import domain.repositories.RatingRepository
-import utils.Constants.MESSAGE_BIG_MASOUD
-import utils.Constants.MESSAGE_KING_MASOUD
-import utils.Constants.MESSAGE_LONG_LIVE_THE_KING
-import utils.Constants.MESSAGE_MASOUD
-import utils.Constants.MESSAGE_WOMEN
-import utils.Constants.MESSAGE_WOMEN_BRAIN
-import utils.Constants.MESSAGE_WOMEN_COFFEE_1
-import utils.Constants.MESSAGE_WOMEN_COFFEE_2
-import utils.Constants.RATING_COOL_DOWN_IN_MINUTES
-import utils.Constants.SOCIAL_CLASS_EXECUTED
-import utils.Constants.SOCIAL_CLASS_GOOD_CITIZEN
-import utils.Constants.SOCIAL_CLASS_LEADER_LI_RIGHT_HAND
-import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
-import java.util.*
+import domain.utils.Constants.RATING_COOL_DOWN_IN_MINUTES
+import domain.utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 
 object MessageHelper {
 
-    suspend fun TelegramBot.sendStickerSet(message: Message) {
+    suspend fun TelegramBot.sendStickerSet(
+        message: Message
+    ) {
         sendSticker(
-            sticker = InputFile.fromId(id = Stickers.STICKER_SET_FILE_ID),
+            sticker = InputFile.fromId(id = StickerMessage.STICKER_SET.fileId),
             chat = message.chat,
             disableNotification = true
         )
     }
 
-    fun shouldSendLongLiveTheKingSticker(message: ContentMessage<TextedMediaContent>) = when {
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_LONG_LIVE_THE_KING) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_KING_MASOUD) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_BIG_MASOUD) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_MASOUD) == true -> true
-        else -> false
+    fun shouldSendLongLiveTheKingSticker(
+        message: ContentMessage<TextedContent>
+    ): Boolean {
+        return message.content.text?.let { messageText ->
+            StickerMessage.HOLY_KING.messages.any {
+                it.contains(other = messageText, ignoreCase = true)
+            }
+        } ?: false
     }
 
-    fun shouldSendWomenGif(message: ContentMessage<TextedMediaContent>) = when {
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_1) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_COFFEE_2) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN) == true -> true
-        message.content.text?.lowercase(Locale.US)?.contains(MESSAGE_WOMEN_BRAIN) == true -> true
-        else -> false
+    fun shouldSendWomenGif(
+        message: ContentMessage<TextedContent>
+    ): Boolean {
+        return message.content.text?.let { messageText ->
+            GifMessage.HMPH_WOMEN.messages.any {
+                it.contains(other = messageText, ignoreCase = true)
+            }
+        } ?: false
     }
 
-    suspend fun TelegramBot.sendLongLiveTheKingSticker(message: Message) {
+    suspend fun TelegramBot.sendLongLiveTheKingSticker(
+        message: Message
+    ) {
         sendSticker(
-            sticker = InputFile.fromId(id = Stickers.HOLY_KING_FILE_ID),
+            sticker = InputFile.fromId(id = StickerMessage.HOLY_KING.fileId),
             chat = message.chat,
             replyParameters = ReplyParameters(message = message),
             disableNotification = true
         )
     }
 
-    suspend fun TelegramBot.sendWomenGif(message: Message) {
+    suspend fun TelegramBot.sendWomenGif(
+        message: Message
+    ) {
         sendAnimation(
-            animation = InputFile.fromId(id = Gifs.WOMEN_FILE_ID),
+            animation = InputFile.fromId(id = GifMessage.HMPH_WOMEN.fileId),
             chat = message.chat,
             replyParameters = ReplyParameters(message = message),
             disableNotification = true
         )
     }
 
-    suspend fun TelegramBot.sendNotGroupMessage(message: Message) {
+    suspend fun TelegramBot.sendNotGroupMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "\uD83D\uDE44The Social Credit System only works in groups.",
             chat = message.chat,
@@ -86,7 +90,9 @@ object MessageHelper {
         )
     }
 
-    suspend fun TelegramBot.sendCreditingYourselfProhibitionMessage(message: Message) {
+    suspend fun TelegramBot.sendCreditingYourselfProhibitionMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "\uD83D\uDEABThe party prohibits crediting yourself. *Great Leader Xi* is watching over you!",
             chat = message.chat,
@@ -96,7 +102,9 @@ object MessageHelper {
         )
     }
 
-    suspend fun TelegramBot.sendCreditingSocialCreditBotProhibitionMessage(message: Message) {
+    suspend fun TelegramBot.sendCreditingSocialCreditBotProhibitionMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "\uD83D\uDEABAn ordinary comrade can't change the credits of the great party! *Great Leader Xi* is watching over you!",
             chat = message.chat,
@@ -106,7 +114,9 @@ object MessageHelper {
         )
     }
 
-    suspend fun TelegramBot.sendCreditingBotProhibitionMessage(message: Message) {
+    suspend fun TelegramBot.sendCreditingBotProhibitionMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "\uD83D\uDEABThe party prohibits crediting other bots. *Great Leader Xi* is watching over you!",
             chat = message.chat,
@@ -116,7 +126,9 @@ object MessageHelper {
         )
     }
 
-    private suspend fun TelegramBot.sendCoolDownMessage(message: Message) {
+    private suspend fun TelegramBot.sendCoolDownMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "Slow down, comrade! One vote for the same comrade every *$RATING_COOL_DOWN_IN_MINUTES minutes*.",
             chat = message.chat,
@@ -126,16 +138,20 @@ object MessageHelper {
         )
     }
 
-    private suspend fun TelegramBot.sendMemberPermissionMessage(message: Message) {
+    private suspend fun TelegramBot.sendMemberPermissionMessage(
+        message: Message
+    ) {
         sendAnimation(
             chat = message.chat,
-            animation = InputFile.fromId(id = Gifs.COTTON_FARM_FILE_ID),
+            animation = InputFile.fromId(id = GifMessage.COTTON_FARM.fileId),
             replyParameters = ReplyParameters(message = message),
             disableNotification = true
         )
     }
 
-    suspend fun TelegramBot.sendZeroChangeTrollMessage(message: Message) {
+    suspend fun TelegramBot.sendZeroChangeTrollMessage(
+        message: Message
+    ) {
         sendMessage(
             text = "±0 social credits does nothing, you fucking *RETARD*.",
             chat = message.chat,
@@ -180,9 +196,9 @@ object MessageHelper {
             val previousSocialCredits = ratingRepository.getUserSocialCredits(
                 groupId = groupId,
                 userId = userId
-            )?.socialCredits ?: 0L
+            )?.socialCredits ?: 0
 
-            val isGivingNegativeCreditToExecutedComrade = previousSocialCredits <= SOCIAL_CLASS_EXECUTED
+            val isGivingNegativeCreditToExecutedComrade = previousSocialCredits <= SocialClass.EXECUTED.credit
                     && socialCreditsChange < 0
             if (isGivingNegativeCreditToExecutedComrade) {
                 sendMessage(
@@ -210,12 +226,12 @@ object MessageHelper {
                 val isSendingToUyghurCamp = previousSocialCredits >= 0L && currentSocialCredits < 0L
                 val isReturningFromUyghurCamp = previousSocialCredits < 0L && currentSocialCredits >= 0L
 
-                val isExecutingComrade = SOCIAL_CLASS_EXECUTED in currentSocialCredits..<previousSocialCredits
-                val isRevivingComrade = SOCIAL_CLASS_EXECUTED in previousSocialCredits..<currentSocialCredits
+                val isExecutingComrade = SocialClass.EXECUTED.credit in currentSocialCredits..<previousSocialCredits
+                val isRevivingComrade = SocialClass.EXECUTED.credit in previousSocialCredits..<currentSocialCredits
 
                 val messageBuilder = StringBuilder().apply {
                     when {
-                        currentSocialCredits >= SOCIAL_CLASS_GOOD_CITIZEN -> {
+                        currentSocialCredits >= SocialClass.GOOD_CITIZEN.credit -> {
                             append("\uD83E\uDEE1The party is proud of comrade *$firstName* with $currentSocialCredits social credits.")
                         }
                         isRevivingComrade -> {
@@ -226,7 +242,7 @@ object MessageHelper {
                             append("\n\n")
                             append("Enjoy your last meal comrade.\uD83C\uDF46")
                         }
-                        currentSocialCredits <= SOCIAL_CLASS_EXECUTED -> {
+                        currentSocialCredits <= SocialClass.EXECUTED.credit -> {
                             append("Executed comrade *$firstName* has $currentSocialCredits social credits.")
                         }
                         currentSocialCredits < 0 -> {
@@ -238,9 +254,9 @@ object MessageHelper {
                     }
 
                     if (isSendingToUyghurCamp) {
-                        val uyghurJob = Jobs.uyghurCampJobs.random()
+                        val jobDescription = UyghurCampJob.entries.random().description
                         append("\n\n")
-                        append("\uD83C\uDFD5The party has decided to send comrade to an Uyghur camp where he will be $uyghurJob.")
+                        append("\uD83C\uDFD5The party has decided to send comrade to an Uyghur camp where he will be $jobDescription.")
                         append("\n\n")
                         append("\uD83D\uDC6E\uD83C\uDFFBWorking in the camp will discipline bad citizens.‼\uFE0F")
                     }
@@ -260,7 +276,7 @@ object MessageHelper {
 
                 if (isSendingToUyghurCamp) {
                     sendAnimation(
-                        animation = InputFile.fromId(id = Gifs.POOH_AND_CJ_FILE_ID),
+                        animation = InputFile.fromId(id = GifMessage.POOH_AND_CJ.fileId),
                         chat = message.chat,
                         disableNotification = true
                     )
@@ -268,7 +284,7 @@ object MessageHelper {
 
                 if (isExecutingComrade) {
                     sendAnimation(
-                        animation = InputFile.fromId(id = Gifs.EXECUTION_FILE_ID),
+                        animation = InputFile.fromId(id = GifMessage.EXECUTION.fileId),
                         chat = message.chat,
                         disableNotification = true
                     )
@@ -276,15 +292,15 @@ object MessageHelper {
 
                 if (isRevivingComrade) {
                     sendAnimation(
-                        animation = InputFile.fromId(id = Gifs.REVIVALE_FILE_ID),
+                        animation = InputFile.fromId(id = GifMessage.REVIVAL.fileId),
                         chat = message.chat,
                         disableNotification = true
                     )
                 }
 
-                if (currentSocialCredits >= SOCIAL_CLASS_LEADER_LI_RIGHT_HAND) {
+                if (currentSocialCredits >= SocialClass.LEADER_LI_RIGHT_HAND.credit) {
                     sendAnimation(
-                        animation = InputFile.fromId(id = Gifs.JOHN_XINA_FILE_ID),
+                        animation = InputFile.fromId(id = GifMessage.JOHN_XINA.fileId),
                         chat = message.chat,
                         disableNotification = true
                     )
