@@ -2,7 +2,6 @@ import data.repositories.RatingRepositoryImpl
 import dev.inmo.tgbotapi.extensions.api.telegramBot
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import domain.repositories.RatingRepository
-import io.ktor.client.engine.*
 import io.ktor.http.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -13,8 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import message_observers.*
 import utils.EnvironmentVariables
-import java.net.Authenticator
-import java.net.PasswordAuthentication
 
 fun main() {
     val ratingRepository: RatingRepository = RatingRepositoryImpl(
@@ -26,6 +23,7 @@ fun main() {
     val telegramBot = telegramBot(
         token = EnvironmentVariables.getBotToken()
     ) {
+        /* PROXY CONFIGS
         Authenticator.setDefault(
             object : Authenticator() {
                 override fun getPasswordAuthentication(): PasswordAuthentication? {
@@ -48,6 +46,7 @@ fun main() {
                 port = EnvironmentVariables.getProxyPort()
             )
         }
+        */
     }
 
     // Start a minimal Ktor server for Render web service
