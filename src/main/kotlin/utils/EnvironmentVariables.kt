@@ -2,6 +2,8 @@ package utils
 
 object EnvironmentVariables {
 
+    fun getRenderPort(): Int = System.getenv("PORT")?.toIntOrNull() ?: 10000
+
     fun getBotToken(): String = System.getenv("BOT_TOKEN")
         ?: throw IllegalStateException("Variable named BOT_TOKEN was not found.")
 
@@ -17,7 +19,7 @@ object EnvironmentVariables {
     fun getProxyHost(): String = System.getenv("PROXY_HOST")
         ?: throw IllegalStateException("Variable named PROXY_HOST was not found.")
 
-    fun getProxyPort(): String = System.getenv("PROXY_PORT")
+    fun getProxyPort(): Int = System.getenv("PROXY_PORT")?.toIntOrNull()
         ?: throw IllegalStateException("Variable named PROXY_PORT was not found.")
 
     fun getProxyUsername(): String = System.getenv("PROXY_USERNAME")
