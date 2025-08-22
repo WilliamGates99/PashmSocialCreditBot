@@ -10,7 +10,6 @@ import message_observers.*
 import utils.EnvironmentVariables
 import java.net.Authenticator
 import java.net.PasswordAuthentication
-import java.util.*
 
 fun main() {
     val ratingRepository: RatingRepository = RatingRepositoryImpl(
@@ -25,9 +24,10 @@ fun main() {
         Authenticator.setDefault(
             object : Authenticator() {
                 override fun getPasswordAuthentication(): PasswordAuthentication? {
-                    val isRequestSentToProxy = requestingHost.lowercase(
-                        Locale.US
-                    ) == EnvironmentVariables.getProxyHost().lowercase(Locale.US)
+                    val isRequestSentToProxy = requestingHost.equals(
+                        other = EnvironmentVariables.getProxyHost(),
+                        ignoreCase = true
+                    )
 
                     return if (isRequestSentToProxy) PasswordAuthentication(
                         /* userName = */ EnvironmentVariables.getProxyUsername(),
