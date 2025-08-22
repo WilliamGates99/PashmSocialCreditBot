@@ -5,12 +5,12 @@ import data.dto.UserRatingsHistoryTable
 import data.dto.UserSocialCreditsEntity
 import data.dto.UsersSocialCreditsTable
 import dev.inmo.tgbotapi.types.chat.member.ChatMember
+import domain.model.SocialClass
 import domain.model.UserSocialCreditsInfo
 import domain.repositories.RatingRepository
+import domain.utils.Constants
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import utils.Constants
-import utils.Constants.THROWABLE_MESSAGE_COOL_DOWN
 import java.time.LocalDate
 
 class RatingRepositoryImpl(
@@ -41,13 +41,16 @@ class RatingRepositoryImpl(
         }
     }
 
-    override fun getGroupSocialCreditsList(groupId: Long): List<UserSocialCreditsInfo> {
+    override fun getGroupSocialCreditsList(
+        groupId: Long,
+        maxRows: Int
+    ): List<UserSocialCreditsInfo> {
         return transaction {
             UserSocialCreditsEntity
                 .find { UsersSocialCreditsTable.groupId eq groupId }
                 .orderBy(Pair(UsersSocialCreditsTable.socialCredits, SortOrder.DESC))
                 .orderBy(Pair(UsersSocialCreditsTable.firstName, SortOrder.ASC))
-                .limit(Constants.GROUP_SOCIAL_CREDITS_LIST_SELECTION_LIMIT)
+                .limit(n = maxRows)
                 .map { it.toUserSocialCreditsInfo() }
         }
     }
@@ -102,7 +105,7 @@ class RatingRepositoryImpl(
                     this.modifiedAt = currentTimeInMillis
                     this.modifiedAtDate = currentDateString
                 } else {
-                    return@transaction Result.failure(Throwable(THROWABLE_MESSAGE_COOL_DOWN))
+                    return@transaction Result.failure(Throwable(Constants.THROWABLE_MESSAGE_COOL_DOWN))
                 }
             }.also {
                 it?.let { println("User ratings history updated: ${it.toUserRatingsHistory()}") }
@@ -124,7 +127,7 @@ class RatingRepositoryImpl(
                     this.username = username
                     this.firstName = firstName
                     this.socialCredits = (this.socialCredits + socialCreditsChange).coerceAtLeast(
-                        minimumValue = Constants.SOCIAL_CLASS_EXECUTED
+                        minimumValue = SocialClass.EXECUTED.credit
                     )
                     this.modifiedAt = currentTimeInMillis
                     ratingStatus = "updated"
@@ -135,7 +138,7 @@ class RatingRepositoryImpl(
                 this.username = username
                 this.firstName = firstName
                 this.socialCredits = socialCreditsChange.coerceAtLeast(
-                    minimumValue = Constants.SOCIAL_CLASS_EXECUTED
+                    minimumValue = SocialClass.EXECUTED.credit
                 )
                 this.createdAt = currentTimeInMillis
                 this.modifiedAt = currentTimeInMillis
