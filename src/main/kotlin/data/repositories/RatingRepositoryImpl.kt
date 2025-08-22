@@ -50,7 +50,7 @@ class RatingRepositoryImpl(
                 .find { UsersSocialCreditsTable.groupId eq groupId }
                 .orderBy(Pair(UsersSocialCreditsTable.socialCredits, SortOrder.DESC))
                 .orderBy(Pair(UsersSocialCreditsTable.firstName, SortOrder.ASC))
-                .limit(n = maxRows)
+                .limit(count = maxRows)
                 .map { it.toUserSocialCreditsInfo() }
         }
     }
