@@ -7,7 +7,7 @@ postgresql = "42.7.7"
 logbackClassic = "1.5.18"
 
 # Plugins
-kotlin = "2.1.20"
+kotlin = "2.2.10"
 
 
 [libraries]
