@@ -56,9 +56,14 @@ fun main() {
         host = "0.0.0.0"
     ) {
         routing {
-            get(path = "/health") {
-                call.respondText(text = "OK", status = HttpStatusCode.OK)
-            }
+            get(
+                path = "/health",
+                body = { call.respond(status = HttpStatusCode.OK, message = "OK") }
+            )
+            head(
+                path = "/health",
+                body = { call.respond(status = HttpStatusCode.OK, message = "OK") }
+            )
         }
     }.start(wait = false) // Run the server non-blocking, allowing telegram bot’s polling logic to continue
 

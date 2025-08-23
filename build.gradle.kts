@@ -1,18 +1,21 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.1.20"
+    kotlin("jvm") version "2.2.10"
     application
     alias(libs.plugins.kotlin.serialization)
 }
 
 group = "com.xeniac"
-version = "2.1.1"
+version = "2.1.2"
 
 kotlin {
-    jvmToolchain(jdkVersion = 23)
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_23)
+        jvmToolchain(jdkVersion = 23)
+        jvmTarget = JvmTarget.fromTarget(target = "23")
+
+        // Enable Context-Sensitive Resolution in Kotlin 2.2
+        freeCompilerArgs.add("-Xcontext-sensitive-resolution")
     }
 }
 
