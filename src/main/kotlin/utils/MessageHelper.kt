@@ -42,8 +42,8 @@ object MessageHelper {
         message: ContentMessage<TextedContent>
     ): Boolean {
         return message.content.text?.let { messageText ->
-            StickerMessage.HOLY_KING.messages.any {
-                it.contains(other = messageText, ignoreCase = true)
+            StickerMessage.HOLY_KING.messages.any { holyKingMessage ->
+                messageText.contains(other = holyKingMessage, ignoreCase = true)
             }
         } ?: false
     }
@@ -52,8 +52,8 @@ object MessageHelper {
         message: ContentMessage<TextedContent>
     ): Boolean {
         return message.content.text?.let { messageText ->
-            GifMessage.HMPH_WOMEN.messages.any {
-                it.contains(other = messageText, ignoreCase = true)
+            GifMessage.HMPH_WOMEN.messages.any { womenMessage ->
+                messageText.contains(other = womenMessage, ignoreCase = true)
             }
         } ?: false
     }
