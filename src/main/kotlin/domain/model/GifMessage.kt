@@ -25,7 +25,11 @@ enum class GifMessage(
             "women☕\uFE0F",
             "women ☕\uFE0F",
             "women",
-            "عقل زن"
+            "aqle zan",
+            "aghle zan",
+            "عقل زن",
+            "زن☕\uFE0F",
+            "زن ☕\uFE0F"
         )
     )
 }

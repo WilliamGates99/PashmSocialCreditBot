@@ -14,7 +14,16 @@ enum class StickerMessage(
             "long live the king",
             "king masoud",
             "big masoud",
-            "masoud"
+            "Masoud Roshan Pajooh",
+            "Masoud Roshan Pazhouh",
+            "masoud",
+            "کینگ مسعود",
+            "بیگ مسعود",
+            "مسعود روشن\u200Cپژوه",
+            "مسعود روشن پژوه",
+            "مسعود",
+            "روشن\u200Cپژوه",
+            "روشن پژوه",
         )
     )
 }
